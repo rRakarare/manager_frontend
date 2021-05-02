@@ -1,29 +1,26 @@
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import jwtDecode from 'jwt-decode'
+import React, { useState, useEffect, useContext } from "react";
+import { Route, Redirect } from "react-router-dom";
 
-function ProtectRoute({component:Component, ...rest}) {
+import { useAuth, checkAuth } from "../context/AuthContext";
 
-    const token = localStorage.getItem('access_token')
-    const expire = jwtDecode(token).exp
-    const dateNow = new Date();
-    const time = dateNow.getTime()/1000
-    
-    const expired = expire < time
+function ProtectRoute({ component: Component, ...rest }) {
+  const [status, setStatus] = useAuth();
+  useEffect(() => {
+    setStatus(checkAuth());
+  }, []);
 
-
-    return (
-            <Route {...rest} render={
-                props=>{
-                    if (!expired) {
-                        return <Component {...rest} {...props} />
-                    } else {
-                        return <Redirect to="/login" />
-                    }
-                }
-            }/>
-            
-    )
+  return (
+    <Route
+      {...rest}
+      render={(props) => {
+        if (status) {
+          return <Component {...rest} {...props} />;
+        } else {
+          return <Redirect to="/login" />;
+        }
+      }}
+    />
+  );
 }
 
-export default ProtectRoute
+export default ProtectRoute;
