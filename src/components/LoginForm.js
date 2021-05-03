@@ -8,6 +8,7 @@ import {
   Message,
   Segment,
 } from "semantic-ui-react";
+import jwtDecode from "jwt-decode";
 import axiosInstance from "../axios/axios";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -29,6 +30,8 @@ function LoginForm() {
         localStorage.setItem("refresh_token", res.data.refresh);
         axiosInstance.defaults.headers["Authorization"] =
           "JWT " + localStorage.getItem("access_token");
+        const name = jwtDecode(res.data.access).name
+        localStorage.setItem("profile_name", name);
         setStatus(true);
         history.push("/");
       }
@@ -38,8 +41,8 @@ function LoginForm() {
   };
 
   return (
-    <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
-      <Grid.Column style={{ maxWidth: 450 }}>
+    <Grid textAlign="center" style={{ height: "80%", maxWidth:"100%" }} verticalAlign="middle">
+      <Grid.Column style={{ maxWidth: 420 }}>
         <Header as="h2" color="teal" textAlign="center">
           UBCDATA Log-in to your account
         </Header>

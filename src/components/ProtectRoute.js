@@ -6,7 +6,10 @@ import { useAuth, checkAuth } from "../context/AuthContext";
 function ProtectRoute({ component: Component, ...rest }) {
   const [status, setStatus] = useAuth();
   useEffect(() => {
-    setStatus(checkAuth());
+    if (status) {
+      setStatus(checkAuth());
+    }
+    
   }, []);
 
   return (

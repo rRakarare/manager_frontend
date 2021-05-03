@@ -1,30 +1,43 @@
 import React, { useRef, useEffect } from "react";
 import {
   Menu,
-  Container,
-  Header,
-  Icon,
-  Image,
-  Segment,
   Sidebar,
   Dropdown,
+  Icon
 } from "semantic-ui-react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { useAuth } from '../context/AuthContext'
 
 function Nav({ children }) {
   const [visible, setVisible] = React.useState(false);
-  const header = useRef();
-  let top = 54.6;
+  const [status, setStatus] = useAuth()
+  const history = useHistory();
+  const username = localStorage.getItem('profile_name')
 
-  useEffect(() => {
-    console.log(header.current.clientHeight);
-  }, []);
+  const logout = () => {
+    setStatus(false)
+    history.push("/login")
+  }
+
+  const UserMenu =  (
+    <Menu.Menu position="right">
+      <Dropdown item text={username}>
+      
+        <Dropdown.Menu>
+          <Dropdown.Item>Profile</Dropdown.Item>
+          <Dropdown.Item onClick={()=>logout()}>Logout</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </Menu.Menu>
+  )
+
 
   return (
     <>
-      <div ref={header}>
-        <Menu style={{ margin: 0 }}>
+      <div>
+        <Menu style={{ margin: 0 }} fixed="top">
           <Menu.Item
+            
             onClick={() => {
               setVisible(!visible);
             }}
@@ -39,29 +52,21 @@ function Nav({ children }) {
           </Link>
 
           <Menu.Item name="features">
-            <h3>asdqwe</h3>
+            <h3>UBC Data</h3>
           </Menu.Item>
-          <Menu.Menu position="right">
-            <Dropdown item text="Categories">
-              <Dropdown.Menu>
-                <Dropdown.Item>Electronics</Dropdown.Item>
-                <Dropdown.Item>Automotive</Dropdown.Item>
-                <Dropdown.Item>Home</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Menu.Menu>
+          {status ? UserMenu : null}
         </Menu>
       </div>
-      <Sidebar.Pushable style={{ minHeight: `calc(100vh - ${top}px)` }}>
+      <Sidebar.Pushable style={{}}>
         <Sidebar
           as={Menu}
           animation="overlay"
           icon="labeled"
-          onHide={() => setVisible(false)}
           vertical
           visible={visible}
           width="thin"
-          style={{ backgroundColor: "white" }}
+          style={{ backgroundColor: "white", paddingTop:53.63 }}
+          
         >
           <Menu.Item as="a">
             <Icon name="home" />
@@ -77,7 +82,7 @@ function Nav({ children }) {
           </Menu.Item>
         </Sidebar>
 
-        <Sidebar.Pusher>{children}</Sidebar.Pusher>
+        <Sidebar.Pusher style={{overflow: 'scroll', height: '100vh', paddingTop:53.63}}>{children}</Sidebar.Pusher>
       </Sidebar.Pushable>
     </>
   );
