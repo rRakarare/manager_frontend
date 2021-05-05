@@ -6,12 +6,23 @@ import axiosInstance from "../axios/axios";
 function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [status, setStatus] = useState([]);
+
+  const getStatus = async () => {
+    try {
+      const res = await axiosInstance.get("status");
+      setStatus(res.data);
+
+    } catch(err) {
+      return err.message
+    }
+  }
 
   const getProjektData = async () => {
     try {
       const res = await axiosInstance.get("projects");
       setData(res.data);
-      setIsLoading(false);
+
     } catch (err) {
       return err.message;
     }
@@ -19,6 +30,8 @@ function Home() {
 
   useEffect(() => {
     getProjektData();
+    getStatus();
+    setIsLoading(false)
   }, []);
 
   const SegmentStyle = {
@@ -32,7 +45,7 @@ function Home() {
       <Grid.Row stretched>
         <Grid.Column width={2}></Grid.Column>
         <Grid.Column width={11}>
-          <Table data={data} isLoading={isLoading} />
+          <Table data={data} isLoading={isLoading} status={status}/>
         </Grid.Column>
         <Grid.Column width={3}>
           <Segment

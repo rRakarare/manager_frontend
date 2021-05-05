@@ -47,7 +47,7 @@ function Nav({ children }) {
 
           <Link to="/">
             <Menu.Item>
-              <img src="https://react.semantic-ui.com/logo.png" />
+              <img src="/ubc.svg" />
             </Menu.Item>
           </Link>
 
