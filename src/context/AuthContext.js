@@ -13,7 +13,6 @@ function AuthProvider({ children }) {
 function checkAuth() {
   const token = localStorage.getItem("access_token");
   if (token) {
-    console.log(jwtDecode(token))
     const expire = jwtDecode(token).exp;
     const dateNow = new Date();
     const time = dateNow.getTime() / 1000;

@@ -48,6 +48,14 @@ function ProjectDetail({ match }) {
               </Step.Content>
             </Step>
 
+            <Step>
+              <Icon name="euro" />
+              <Step.Content>
+                <Step.Title>Rechnung</Step.Title>
+                <Step.Description>Letzte Rechnung gestellt.</Step.Description>
+              </Step.Content>
+            </Step>
+
             <Step active>
               <Icon name="flag checkered" />
               <Step.Content>

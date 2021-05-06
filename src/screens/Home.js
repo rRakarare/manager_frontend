@@ -4,7 +4,7 @@ import Table from "../components/Table";
 import axiosInstance from "../axios/axios";
 
 function Home() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState({dataLoaded:true, statusLoaded:true});
   const [data, setData] = useState([]);
   const [status, setStatus] = useState([]);
 
@@ -12,6 +12,7 @@ function Home() {
     try {
       const res = await axiosInstance.get("status");
       setStatus(res.data);
+      setIsLoading({...isLoading, dataLoaded : false, statusLoaded : false})
 
     } catch(err) {
       return err.message
@@ -22,6 +23,7 @@ function Home() {
     try {
       const res = await axiosInstance.get("projects");
       setData(res.data);
+      
 
     } catch (err) {
       return err.message;
@@ -31,7 +33,7 @@ function Home() {
   useEffect(() => {
     getProjektData();
     getStatus();
-    setIsLoading(false)
+
   }, []);
 
   const SegmentStyle = {

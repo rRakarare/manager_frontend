@@ -22,7 +22,7 @@ function Table( {data, status, isLoading}) {
     })
     return (
         <MaterialTable
-            isLoading={isLoading}
+            isLoading={isLoading.dataLoaded || isLoading.statusLoaded}
             title="Projektliste"
             columns={[
                 { title: 'Titel', field: 'title' },
