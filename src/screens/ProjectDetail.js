@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Segment, Statistic, Step, Icon } from "semantic-ui-react";
+import {
+  Grid,
+  Segment,
+  Statistic,
+  Step,
+  Icon,
+  Loader,
+} from "semantic-ui-react";
 import axiosInstance from "../axios/axios";
 
 function ProjectDetail({ match }) {
   const projectID = match.params.id;
   const [data, setData] = useState({});
-
-  const SegmentStyle = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  };
+  const [status, setStatus] = useState([]);
 
   const getProjectData = async () => {
     try {
@@ -21,9 +23,56 @@ function ProjectDetail({ match }) {
     }
   };
 
+  const getStatus = async () => {
+    try {
+      const res = await axiosInstance.get("status");
+      setStatus(res.data);
+    } catch (err) {
+      return err.message;
+    }
+  };
+
   useEffect(() => {
     getProjectData();
+    getStatus();
   }, []);
+
+  useEffect(() => {
+    console.log(status);
+    console.log(data.status ? data.status.id : "yolo");
+  }, [status, data]);
+
+  const setNewStatus = async (id) => {
+    try {
+      const res = await axiosInstance.put(`projects/${projectID}/`, {
+        status: id,
+      });
+    } catch (err) {
+      console.log(err);
+      return err.message;
+    }
+  };
+
+  const ryout = async (asd) => {
+    console.log(asd);
+  };
+
+  const Steps = status.map((item) =>
+    data.status ? (
+      <Step
+        key={item.id}
+        completed={data.status.id >= item.order}
+        active={data.status.id + 1 == item.order}
+        onClick={() => setNewStatus(item.id)}
+      >
+        <Icon name={item.icontext} />
+        <Step.Content>
+          <Step.Title>{item.name}</Step.Title>
+          <Step.Description>{item.subtext}</Step.Description>
+        </Step.Content>
+      </Step>
+    ) : null
+  );
 
   return (
     <Grid style={{ margin: "2rem" }} columns={3}>
@@ -32,37 +81,7 @@ function ProjectDetail({ match }) {
         <Grid.Column width={11}>{data.title}</Grid.Column>
         <Grid.Column width={3}>
           <Step.Group fluid vertical>
-            <Step>
-              <Icon name="signup" />
-              <Step.Content>
-                <Step.Title>Angebot</Step.Title>
-                <Step.Description>Angebot an Kunden</Step.Description>
-              </Step.Content>
-            </Step>
-
-            <Step>
-              <Icon name="play" />
-              <Step.Content>
-                <Step.Title>Bearbeitung</Step.Title>
-                <Step.Description>Projekt in Bearbeitung</Step.Description>
-              </Step.Content>
-            </Step>
-
-            <Step>
-              <Icon name="euro" />
-              <Step.Content>
-                <Step.Title>Rechnung</Step.Title>
-                <Step.Description>Letzte Rechnung gestellt.</Step.Description>
-              </Step.Content>
-            </Step>
-
-            <Step active>
-              <Icon name="flag checkered" />
-              <Step.Content>
-                <Step.Title>Abschluss</Step.Title>
-                <Step.Description>Projekt abgeschlossen</Step.Description>
-              </Step.Content>
-            </Step>
+            {Steps}
           </Step.Group>
         </Grid.Column>
       </Grid.Row>

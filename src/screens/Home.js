@@ -4,7 +4,10 @@ import Table from "../components/Table";
 import axiosInstance from "../axios/axios";
 
 function Home() {
-  const [isLoading, setIsLoading] = useState({dataLoaded:true, statusLoaded:true});
+  const [isLoading, setIsLoading] = useState({
+    dataLoaded: true,
+    statusLoaded: true,
+  });
   const [data, setData] = useState([]);
   const [status, setStatus] = useState([]);
 
@@ -12,19 +15,27 @@ function Home() {
     try {
       const res = await axiosInstance.get("status");
       setStatus(res.data);
-      setIsLoading({...isLoading, dataLoaded : false, statusLoaded : false})
-
-    } catch(err) {
-      return err.message
+      setIsLoading((prevState) => {
+        return {
+          ...prevState,
+          dataLoaded: false,
+        };
+      });
+    } catch (err) {
+      return err.message;
     }
-  }
+  };
 
   const getProjektData = async () => {
     try {
       const res = await axiosInstance.get("projects");
       setData(res.data);
-      
-
+      setIsLoading((prevState) => {
+        return {
+          ...prevState,
+          statusLoaded: false,
+        };
+      });
     } catch (err) {
       return err.message;
     }
@@ -33,7 +44,6 @@ function Home() {
   useEffect(() => {
     getProjektData();
     getStatus();
-
   }, []);
 
   const SegmentStyle = {
@@ -47,7 +57,7 @@ function Home() {
       <Grid.Row stretched>
         <Grid.Column width={2}></Grid.Column>
         <Grid.Column width={11}>
-          <Table data={data} isLoading={isLoading} status={status}/>
+          <Table data={data} isLoading={isLoading} status={status} />
         </Grid.Column>
         <Grid.Column width={3}>
           <Segment
