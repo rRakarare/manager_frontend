@@ -16,7 +16,7 @@ function ProjectDetail({ match }) {
 
   const getProjectData = async () => {
     try {
-      const res = await axiosInstance.get(`projects/${projectID}`);
+      const res = await axiosInstance.get(`projects/${projectID}/`);
       setData(res.data);
     } catch (err) {
       return err.message;
@@ -38,7 +38,7 @@ function ProjectDetail({ match }) {
   }, []);
 
   useEffect(() => {
-    console.log(status);
+    console.log(data);
     console.log(data.status ? data.status.id : "yolo");
   }, [status, data]);
 
@@ -46,9 +46,11 @@ function ProjectDetail({ match }) {
     try {
       const res = await axiosInstance.put(`projects/${projectID}/`, {
         status: id,
+        title: data.title,
       });
+      setData(res.data)
     } catch (err) {
-      console.log(err);
+      console.log(err.response);
       return err.message;
     }
   };
@@ -61,9 +63,9 @@ function ProjectDetail({ match }) {
     data.status ? (
       <Step
         key={item.id}
-        completed={data.status.id >= item.order}
-        active={data.status.id + 1 == item.order}
-        onClick={() => setNewStatus(item.id)}
+        completed={data.status >= item.order}
+        active={data.status + 1 == item.order}
+        onClick={() => setNewStatus(item.order)}
       >
         <Icon name={item.icontext} />
         <Step.Content>

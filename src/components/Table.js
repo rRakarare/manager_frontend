@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useState} from "react";
 import MaterialTable from "material-table";
 import { useHistory } from "react-router-dom";
+import {Portal, Segment, Header, Button} from "semantic-ui-react";
 
 function Table({ data, status, isLoading }) {
+  const [open, setOpen] = useState(false)
   const history = useHistory();
-  console.log(isLoading);
+  console.log(data);
 
   const lookupstatus = {};
   status.forEach((item) => {
@@ -24,39 +26,57 @@ function Table({ data, status, isLoading }) {
     };
   });
   return (
-    <MaterialTable
-      isLoading={isLoading.dataLoaded || isLoading.statusLoaded}
-      title="Projektliste"
-      columns={[
-        { title: "Titel", field: "title" },
-        { title: "Kunde", field: "client" },
-        { title: "Erstellt", field: "created_at" },
-        { title: "Status", field: "status", lookup: lookupstatus },
-      ]}
-      data={tableData}
-      options={{
-        actionsColumnIndex: -1,
-        sorting: true,
-        filtering: true,
-        exportButton: true,
-      }}
-      actions={[
-        {
-          icon: "rate_review",
-          tooltip: "Projektdetails",
-          onClick: (event, rowData) => {
-            history.push(`/projects/${rowData.id}`);
+    <>
+      <MaterialTable
+        isLoading={isLoading.dataLoaded || isLoading.statusLoaded}
+        title="Projektliste"
+        columns={[
+          { title: "Titel", field: "title" },
+          { title: "Kunde", field: "client" },
+          { title: "Erstellt", field: "created_at" },
+          { title: "Status", field: "status", lookup: lookupstatus },
+        ]}
+        data={tableData}
+        options={{
+          actionsColumnIndex: -1,
+          sorting: true,
+          filtering: true,
+          exportButton: true,
+        }}
+        actions={[
+          {
+            icon: "rate_review",
+            tooltip: "Projektdetails",
+            onClick: (event, rowData) => {
+              history.push(`/projects/${rowData.id}`);
+            },
           },
-        },
-        {
-          icon: "delete",
-          tooltip: "Projekt löschen",
-          onClick: (event, rowData) => {
-            console.log(rowData.id);
+          {
+            icon: "delete",
+            tooltip: "Projekt löschen",
+            onClick: (event, rowData) => {
+              setOpen(true);
+            },
           },
-        },
-      ]}
-    />
+        ]}
+      />
+      <Portal onClose={()=>setOpen(false)} open={open}>
+        <Segment
+          style={{
+            left: "40%",
+            position: "fixed",
+            top: "30%",
+            zIndex: 1000,
+          }}
+        >
+          <Header>This is a controlled portal</Header>
+          <p>Portals have tons of great callback functions to hook into.</p>
+          <p>To close, simply click the close button or click away</p>
+
+          <Button content="Close Portal" negative onClick={()=>setOpen(false)} />
+        </Segment>
+      </Portal>
+    </>
   );
 }
 

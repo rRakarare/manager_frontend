@@ -28,7 +28,7 @@ function Home() {
 
   const getProjektData = async () => {
     try {
-      const res = await axiosInstance.get("projects");
+      const res = await axiosInstance.get("projects/");
       setData(res.data);
       setIsLoading((prevState) => {
         return {
