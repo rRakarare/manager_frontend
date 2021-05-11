@@ -129,6 +129,25 @@ function ProjectDetail({ match }) {
     </Item>
   );
 
+  const upDateInvoiceStatus = async (id, todo) => {
+    try {
+      const invoiceindex = invoices.findIndex((item) => item.id === id);
+      const res = await axiosInstance.put(`invoices/${id}`, {
+        ...invoices[invoiceindex],
+        sent: todo == "sent" || todo == "got" ? true : false,
+        got: todo == "got" ? true : false,
+      });
+      setInvoices(
+        invoices.map((item, index) =>
+          index === invoiceindex ? res.data : item
+        )
+      );
+    } catch (err) {
+      console.log(err.response);
+      return err.message;
+    }
+  };
+
   const Invoice = _.isEmpty(data) ? (
     <Dimmer active inverted>
       <Loader size="medium">Loading</Loader>
@@ -136,11 +155,35 @@ function ProjectDetail({ match }) {
   ) : (
     <List divided relaxed>
       {invoices.map((item) => (
-        <List.Item>
+        <List.Item key={item.id}>
           <List.Content floated="right">
             <Button size="tiny">Add</Button>
           </List.Content>
-          <List.Icon name="circle outline" size="large" verticalAlign="middle" />
+          {item.got ? (
+            <List.Icon
+              onClick={() => upDateInvoiceStatus(item.id, "raw")}
+              style={{ cursor: "pointer" }}
+              name="check circle outline"
+              size="large"
+              verticalAlign="middle"
+            />
+          ) : item.sent ? (
+            <List.Icon
+              onClick={() => upDateInvoiceStatus(item.id, "got")}
+              style={{ cursor: "pointer" }}
+              name="play circle outline"
+              size="large"
+              verticalAlign="middle"
+            />
+          ) : (
+            <List.Icon
+              style={{ cursor: "pointer" }}
+              onClick={() => upDateInvoiceStatus(item.id, "sent")}
+              name="circle outline"
+              size="large"
+              verticalAlign="middle"
+            />
+          )}
           <List.Content>
             <List.Header>{item.title}</List.Header>
             <List.Description>

@@ -1,10 +1,10 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import MaterialTable from "material-table";
 import { useHistory } from "react-router-dom";
-import {Portal, Segment, Header, Button} from "semantic-ui-react";
+import { Portal, Segment, Header, Button } from "semantic-ui-react";
 
 function Table({ data, status, isLoading }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const history = useHistory();
   console.log(data);
 
@@ -45,7 +45,7 @@ function Table({ data, status, isLoading }) {
         }}
         actions={[
           {
-            icon: "rate_review",
+            icon: "edit",
             tooltip: "Projektdetails",
             onClick: (event, rowData) => {
               history.push(`/projects/${rowData.id}`);
@@ -60,7 +60,7 @@ function Table({ data, status, isLoading }) {
           },
         ]}
       />
-      <Portal onClose={()=>setOpen(false)} open={open}>
+      <Portal onClose={() => setOpen(false)} open={open}>
         <Segment
           style={{
             left: "40%",
@@ -73,7 +73,11 @@ function Table({ data, status, isLoading }) {
           <p>Portals have tons of great callback functions to hook into.</p>
           <p>To close, simply click the close button or click away</p>
 
-          <Button content="Close Portal" negative onClick={()=>setOpen(false)} />
+          <Button
+            content="Close Portal"
+            negative
+            onClick={() => setOpen(false)}
+          />
         </Segment>
       </Portal>
     </>
