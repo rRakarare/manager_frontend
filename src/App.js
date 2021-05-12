@@ -13,6 +13,7 @@ function App() {
     <AuthProvider>
       <Router>
         <Nav>
+          <div style={{margin: "10px"}}>
           <Switch>
             <ProtectRoute asd="asdqwe123" exact path="/" component={Home} />
             <ProtectRoute asd="asdqwe123" exact path="/projects/:id" component={ProjectDetail} />
@@ -20,6 +21,7 @@ function App() {
               <LoginForm />
             </Route>
           </Switch>
+          </div>
         </Nav>
       </Router>
     </AuthProvider>

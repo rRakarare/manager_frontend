@@ -11,8 +11,10 @@ import {
   Loader,
   Dimmer,
   Label,
+  Popup,
 } from "semantic-ui-react";
 import axiosInstance from "../axios/axios";
+import MaterialTable from "material-table";
 var _ = require("lodash/core");
 
 function ProjectDetail({ match }) {
@@ -153,49 +155,24 @@ function ProjectDetail({ match }) {
       <Loader size="medium">Loading</Loader>
     </Dimmer>
   ) : (
-    <List divided relaxed>
-      {invoices.map((item) => (
-        <List.Item key={item.id}>
-          <List.Content floated="right">
-            <Button size="tiny">Add</Button>
-          </List.Content>
-          {item.got ? (
-            <List.Icon
-              onClick={() => upDateInvoiceStatus(item.id, "raw")}
-              style={{ cursor: "pointer" }}
-              name="check circle outline"
-              size="large"
-              verticalAlign="middle"
-            />
-          ) : item.sent ? (
-            <List.Icon
-              onClick={() => upDateInvoiceStatus(item.id, "got")}
-              style={{ cursor: "pointer" }}
-              name="play circle outline"
-              size="large"
-              verticalAlign="middle"
-            />
-          ) : (
-            <List.Icon
-              style={{ cursor: "pointer" }}
-              onClick={() => upDateInvoiceStatus(item.id, "sent")}
-              name="circle outline"
-              size="large"
-              verticalAlign="middle"
-            />
-          )}
-          <List.Content>
-            <List.Header>{item.title}</List.Header>
-            <List.Description>
-              {new Intl.NumberFormat("de-DE", {
-                style: "currency",
-                currency: "EUR",
-              }).format(item.amount)}
-            </List.Description>
-          </List.Content>
-        </List.Item>
-      ))}
-    </List>
+    <MaterialTable
+
+      style={{boxShadow:'none'}}
+      columns={[
+        { title: 'Name', field: 'title' },
+        { title: 'RN', field: 'invoice_number' },
+
+      ]}
+      data={invoices}        
+      options={{
+        sorting: true,
+        showTitle: false,
+        toolbar:false,
+        pageSize: 4,
+        pageSizeOptions : []
+      }}
+      
+    />
   );
 
   return (
