@@ -53,7 +53,7 @@ function Home() {
   };
 
   return (
-    <Grid stackable style={{ margin: "2rem" }} columns={3}>
+    <Grid stackable columns={3}>
       <Grid.Row stretched>
         <Grid.Column width={13}>
           <Table data={data} isLoading={isLoading} status={status} />

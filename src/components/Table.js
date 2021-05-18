@@ -5,6 +5,7 @@ import { Portal, Segment, Header, Button } from "semantic-ui-react";
 
 function Table({ data, status, isLoading }) {
   const [open, setOpen] = useState(false);
+  const [delproject, setDelproject] = useState({});
   const history = useHistory();
   console.log(data);
 
@@ -55,6 +56,8 @@ function Table({ data, status, isLoading }) {
             icon: "delete",
             tooltip: "Projekt löschen",
             onClick: (event, rowData) => {
+              console.log(rowData);
+              setDelproject(rowData);
               setOpen(true);
             },
           },
@@ -69,15 +72,17 @@ function Table({ data, status, isLoading }) {
             zIndex: 1000,
           }}
         >
-          <Header>This is a controlled portal</Header>
-          <p>Portals have tons of great callback functions to hook into.</p>
-          <p>To close, simply click the close button or click away</p>
+          <Header>Projekt löschen</Header>
+          <p>
+            Das Project{" "}
+            <strong>
+              {delproject.title} ({delproject.client})
+            </strong>{" "}
+            wirklich löschen ?
+          </p>
 
-          <Button
-            content="Close Portal"
-            negative
-            onClick={() => setOpen(false)}
-          />
+          <Button content="Löschen" negative onClick={() => setOpen(false)} />
+          <Button content="Abbrechen" primary onClick={() => setOpen(false)} />
         </Segment>
       </Portal>
     </>

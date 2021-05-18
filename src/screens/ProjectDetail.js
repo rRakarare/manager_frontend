@@ -126,6 +126,11 @@ function ProjectDetail({ match }) {
             icon="edit"
             content="Bearbeiten"
           />
+          <Button
+            style={{ marginBottom: ".3rem" }}
+            icon="edit"
+            content="Bearbeiten"
+          />
         </Item.Extra>
       </Item.Content>
     </Item>
@@ -156,27 +161,42 @@ function ProjectDetail({ match }) {
     </Dimmer>
   ) : (
     <MaterialTable
-
-      style={{boxShadow:'none'}}
+      style={{ boxShadow: "none" }}
       columns={[
-        { title: 'Name', field: 'title' },
-        { title: 'RN', field: 'invoice_number' },
-
+        { title: "Name", field: "title" },
+        { title: "RN", field: "invoice_number" },
+        {
+          title: "Betrag",
+          field: "amount",
+          type: "currency",
+          currencySetting: { locale: "de", currencyCode: "EUR" },
+        },
+        { title: "Datum", field: "date_of_payment", type: "date" },
       ]}
-      data={invoices}        
+      actions={[
+        {
+          icon: "edit",
+          tooltip: "Bearbeiten",
+        },
+        {
+          icon: "delete",
+          tooltip: "Rechnung löschen",
+        },
+      ]}
+      data={invoices}
       options={{
+        actionsColumnIndex: -1,
         sorting: true,
         showTitle: false,
-        toolbar:false,
+        toolbar: false,
         pageSize: 4,
-        pageSizeOptions : []
+        pageSizeOptions: [],
       }}
-      
     />
   );
 
   return (
-    <Grid stackable style={{ margin: "2rem" }} columns={3}>
+    <Grid stackable columns={3}>
       <Grid.Row style={{ minHeight: "343px" }} stretched>
         <Grid.Column computer={6} tablet={16}>
           <Segment>{Projekt}</Segment>
