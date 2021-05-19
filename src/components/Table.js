@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MaterialTable from "material-table";
 import { useHistory } from "react-router-dom";
-import { Portal, Segment, Header, Button } from "semantic-ui-react";
+import { Modal, Segment, Header, Button } from "semantic-ui-react";
 
 function Table({ data, status, isLoading }) {
   const [open, setOpen] = useState(false);
@@ -63,28 +63,29 @@ function Table({ data, status, isLoading }) {
           },
         ]}
       />
-      <Portal onClose={() => setOpen(false)} open={open}>
-        <Segment
-          style={{
-            left: "40%",
-            position: "fixed",
-            top: "30%",
-            zIndex: 1000,
-          }}
-        >
-          <Header>Projekt löschen</Header>
-          <p>
-            Das Project{" "}
+
+
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+      >
+        <Modal.Header>Projekt löschen</Modal.Header>
+        <Modal.Content>
+        Das Project{" "}
             <strong>
               {delproject.title} ({delproject.client})
             </strong>{" "}
             wirklich löschen ?
-          </p>
-
-          <Button content="Löschen" negative onClick={() => setOpen(false)} />
-          <Button content="Abbrechen" primary onClick={() => setOpen(false)} />
-        </Segment>
-      </Portal>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button negative onClick={() => setOpen(false)}>
+            Disagree
+          </Button>
+          <Button positive onClick={() => setOpen(false)}>
+            Agree
+          </Button>
+        </Modal.Actions>
+      </Modal>
     </>
   );
 }

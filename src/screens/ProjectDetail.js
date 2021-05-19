@@ -128,21 +128,25 @@ function ProjectDetail({ match }) {
           />
           <Button
             style={{ marginBottom: ".3rem" }}
-            icon="edit"
-            content="Bearbeiten"
+            icon="add"
+            content="Rechnung"
+          />
+          <Button
+            style={{ marginBottom: ".3rem" }}
+            icon="add"
+            content="Task"
           />
         </Item.Extra>
       </Item.Content>
     </Item>
   );
 
-  const upDateInvoiceStatus = async (id, todo) => {
+  const upDateInvoiceStatus = async (id) => {
     try {
       const invoiceindex = invoices.findIndex((item) => item.id === id);
       const res = await axiosInstance.put(`invoices/${id}`, {
         ...invoices[invoiceindex],
-        sent: todo == "sent" || todo == "got" ? true : false,
-        got: todo == "got" ? true : false,
+        status: invoices[invoiceindex].status === 3 ? 1 : invoices[invoiceindex].status + 1
       });
       setInvoices(
         invoices.map((item, index) =>
@@ -175,14 +179,40 @@ function ProjectDetail({ match }) {
       ]}
       actions={[
         {
+          icon: "circle",
+          tooltip: "status",
+          onClick: (event,rowData)=>{upDateInvoiceStatus(rowData.id)}
+        },
+        {
           icon: "edit",
           tooltip: "Bearbeiten",
+          onClick: ()=>{}
         },
         {
           icon: "delete",
+          color:'red',
           tooltip: "Rechnung löschen",
+          onClick: ()=>{}
         },
       ]}
+      components={{
+        Action: props => {
+          const encode = {
+            1: 'circle outline',
+            2: 'play circle outline',
+            3: 'check circle outline'
+          }
+          return (
+            <Popup content={props.action.tooltip} trigger={<Icon
+              style={{cursor:'pointer'}}
+              size="large"
+              name={props.action.icon == "circle" ? encode[props.data.status]:props.action.icon}
+              onClick={(event) => props.action.onClick(event, props.data)}
+            />}/>
+            
+          )
+        },
+      }}
       data={invoices}
       options={{
         actionsColumnIndex: -1,
