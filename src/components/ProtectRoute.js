@@ -1,13 +1,18 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect} from "react";
 import { Route, Redirect } from "react-router-dom";
+import {useAppStore, checkAuth} from '../app.state'
 
-import { useAuth, checkAuth } from "../context/AuthContext";
+
 
 function ProtectRoute({ component: Component, ...rest }) {
-  const [status, setStatus] = useAuth();
+
+  const auth = useAppStore(state=>state.auth)
+  const setAuth = useAppStore(state=>state.setAuth)
+
+
   useEffect(() => {
-    if (status) {
-      setStatus(checkAuth());
+    if (auth) {
+      setAuth(checkAuth())
     }
     
   }, []);
@@ -16,7 +21,7 @@ function ProtectRoute({ component: Component, ...rest }) {
     <Route
       {...rest}
       render={(props) => {
-        if (status) {
+        if (auth) {
           return <Component {...rest} {...props} />;
         } else {
           return <Redirect to="/login" />;

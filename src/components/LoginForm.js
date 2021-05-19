@@ -11,12 +11,14 @@ import {
 import jwtDecode from "jwt-decode";
 import axiosInstance from "../axios/axios";
 import { useHistory } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAppStore } from '../app.state'
 
 function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [status, setStatus] = useAuth();
+
+  const setAuth = useAppStore(state=>state.setAuth)
+
   const history = useHistory();
 
   const login = async () => {
@@ -32,7 +34,7 @@ function LoginForm() {
           "JWT " + localStorage.getItem("access_token");
         const name = jwtDecode(res.data.access).name
         localStorage.setItem("profile_name", name);
-        setStatus(true);
+        setAuth(true);
         history.push("/");
       }
     } catch (err) {

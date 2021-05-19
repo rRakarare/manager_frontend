@@ -15,35 +15,26 @@ import {
 } from "semantic-ui-react";
 import axiosInstance from "../axios/axios";
 import MaterialTable from "material-table";
+import ProjectInvoices from '../components/ProjectInvoices'
+import { useAppStore } from '../app.state'
 var _ = require("lodash/core");
 
 function ProjectDetail({ match }) {
   const projectID = match.params.id;
-  const [data, setData] = useState({});
+  const projectdata = useAppStore(state => state.projectdata)
+  const setProjectdata = useAppStore(state => state.setProjectdata)
+
   const [status, setStatus] = useState([]);
-  const [invoices, setInvoices] = useState([]);
 
   const getProjectData = async () => {
     try {
       const res = await axiosInstance.get(`projects/${projectID}/`);
-      setData(res.data);
+      setProjectdata(res.data);
     } catch (err) {
       return err.message;
     }
   };
 
-  const getInvoice = async () => {
-    try {
-      const res = await axiosInstance.get("invoices", {
-        params: {
-          id: projectID,
-        },
-      });
-      setInvoices(res.data);
-    } catch (err) {
-      return err.message;
-    }
-  };
 
   const getStatus = async () => {
     try {
@@ -57,20 +48,17 @@ function ProjectDetail({ match }) {
   useEffect(() => {
     getProjectData();
     getStatus();
-    getInvoice();
   }, []);
 
-  useEffect(() => {
-    console.log(invoices);
-  }, [invoices, data]);
+
 
   const setNewStatus = async (id) => {
     try {
       const res = await axiosInstance.put(`projects/${projectID}/`, {
         status: id,
-        title: data.title,
+        title: projectdata.title,
       });
-      setData(res.data);
+      setProjectdata(res.data);
     } catch (err) {
       console.log(err.response);
       return err.message;
@@ -78,11 +66,11 @@ function ProjectDetail({ match }) {
   };
 
   const Steps = status.map((item) =>
-    !_.isEmpty(data) ? (
+    !_.isEmpty(projectdata) ? (
       <Step
         key={item.id}
-        completed={data.status >= item.order}
-        active={data.status + 1 == item.order}
+        completed={projectdata.status >= item.order}
+        active={projectdata.status + 1 == item.order}
         onClick={() => setNewStatus(item.order)}
       >
         <Icon name={item.icontext} />
@@ -94,12 +82,12 @@ function ProjectDetail({ match }) {
     ) : null
   );
 
-  const date = new Date(data.created_at).toLocaleDateString("de", {
+  const date = new Date(projectdata.created_at).toLocaleDateString("de", {
     hour: "numeric",
     minute: "numeric",
   });
 
-  const Projekt = _.isEmpty(data) ? (
+  const Projekt = _.isEmpty(projectdata) ? (
     <Dimmer active inverted>
       <Loader size="medium">Loading</Loader>
     </Dimmer>
@@ -107,12 +95,12 @@ function ProjectDetail({ match }) {
     <Item>
       <Item.Content>
         <Item.Header style={{ fontSize: "1.4rem", marginBottom: "1rem" }}>
-          {data.title}
+          {projectdata.title}
         </Item.Header>
         <Item.Meta style={{ color: "grey", marginBottom: "1rem" }}>
           <span style={{ display: "block" }} className="cinema">
             <strong>Kunde: </strong>
-            {data.client.name}
+            {projectdata.client.name}
           </span>
           <span style={{ display: "block" }} className="cinema">
             <strong>Erstellt: </strong>
@@ -141,89 +129,7 @@ function ProjectDetail({ match }) {
     </Item>
   );
 
-  const upDateInvoiceStatus = async (id) => {
-    try {
-      const invoiceindex = invoices.findIndex((item) => item.id === id);
-      const res = await axiosInstance.put(`invoices/${id}`, {
-        ...invoices[invoiceindex],
-        status: invoices[invoiceindex].status === 3 ? 1 : invoices[invoiceindex].status + 1
-      });
-      setInvoices(
-        invoices.map((item, index) =>
-          index === invoiceindex ? res.data : item
-        )
-      );
-    } catch (err) {
-      console.log(err.response);
-      return err.message;
-    }
-  };
 
-  const Invoice = _.isEmpty(data) ? (
-    <Dimmer active inverted>
-      <Loader size="medium">Loading</Loader>
-    </Dimmer>
-  ) : (
-    <MaterialTable
-      style={{ boxShadow: "none" }}
-      columns={[
-        { title: "Name", field: "title" },
-        { title: "RN", field: "invoice_number" },
-        {
-          title: "Betrag",
-          field: "amount",
-          type: "currency",
-          currencySetting: { locale: "de", currencyCode: "EUR" },
-        },
-        { title: "Datum", field: "date_of_payment", type: "date" },
-      ]}
-      actions={[
-        {
-          icon: "circle",
-          tooltip: "status",
-          onClick: (event,rowData)=>{upDateInvoiceStatus(rowData.id)}
-        },
-        {
-          icon: "edit",
-          tooltip: "Bearbeiten",
-          onClick: ()=>{}
-        },
-        {
-          icon: "delete",
-          color:'red',
-          tooltip: "Rechnung löschen",
-          onClick: ()=>{}
-        },
-      ]}
-      components={{
-        Action: props => {
-          const encode = {
-            1: 'circle outline',
-            2: 'play circle outline',
-            3: 'check circle outline'
-          }
-          return (
-            <Popup content={props.action.tooltip} trigger={<Icon
-              style={{cursor:'pointer'}}
-              size="large"
-              name={props.action.icon == "circle" ? encode[props.data.status]:props.action.icon}
-              onClick={(event) => props.action.onClick(event, props.data)}
-            />}/>
-            
-          )
-        },
-      }}
-      data={invoices}
-      options={{
-        actionsColumnIndex: -1,
-        sorting: true,
-        showTitle: false,
-        toolbar: false,
-        pageSize: 4,
-        pageSizeOptions: [],
-      }}
-    />
-  );
 
   return (
     <Grid stackable columns={3}>
@@ -232,7 +138,7 @@ function ProjectDetail({ match }) {
           <Segment>{Projekt}</Segment>
         </Grid.Column>
         <Grid.Column computer={6} tablet={16}>
-          <Segment>{Invoice}</Segment>
+          <Segment><ProjectInvoices projectID={projectID}/></Segment>
         </Grid.Column>
         <Grid.Column computer={4} tablet={16}>
           <Step.Group fluid vertical>

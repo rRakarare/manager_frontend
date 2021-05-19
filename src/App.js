@@ -2,7 +2,6 @@ import { useState } from "react";
 import Nav from "./components/Header";
 import LoginForm from "./components/LoginForm";
 import ProtectRoute from "./components/ProtectRoute";
-import { AuthProvider } from "./context/AuthContext";
 
 import Home from "./screens/Home";
 import ProjectDetail from "./screens/ProjectDetail";
@@ -10,7 +9,7 @@ import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 
 function App() {
   return (
-    <AuthProvider>
+    
       <Router>
         <Nav>
           <div style={{ margin: "2rem" }}>
@@ -29,7 +28,7 @@ function App() {
           </div>
         </Nav>
       </Router>
-    </AuthProvider>
+    
   );
 }
 

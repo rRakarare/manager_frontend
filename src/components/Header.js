@@ -6,16 +6,20 @@ import {
   Icon
 } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
-import { useAuth } from '../context/AuthContext'
+import { useAppStore } from '../app.state'
 
 function Nav({ children }) {
   const [visible, setVisible] = React.useState(false);
-  const [status, setStatus] = useAuth()
+  const auth = useAppStore(state=>state.auth)
+  const setAuth = useAppStore(state=>state.setAuth)
+
   const history = useHistory();
   const username = localStorage.getItem('profile_name')
 
   const logout = () => {
-    setStatus(false)
+    setAuth(false)
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('profile_name')
     history.push("/login")
   }
 
@@ -54,7 +58,7 @@ function Nav({ children }) {
           <Menu.Item name="features">
             <h3>UBC Data</h3>
           </Menu.Item>
-          {status ? UserMenu : null}
+          {auth ? UserMenu : null}
         </Menu>
       </div>
       <Sidebar.Pushable style={{}}>
