@@ -5,9 +5,9 @@ import axiosInstance from "../axios/axios";
 import { useAppStore } from "../app.state";
 var _ = require("lodash/core");
 
-function ProjectInvoices({projectID}) {
-
-  const [invoices, setInvoices] = useState([]);
+function ProjectInvoices({ projectID }) {
+  const invoices = useAppStore((state) => state.invoices);
+  const setInvoices = useAppStore((state) => state.setInvoices);
 
   const getInvoice = async () => {
     try {
@@ -17,7 +17,6 @@ function ProjectInvoices({projectID}) {
         },
       });
       setInvoices(res.data);
-      console.log(res)
     } catch (err) {
       return err.message;
     }
@@ -45,8 +44,12 @@ function ProjectInvoices({projectID}) {
   };
 
   useEffect(() => {
-    getInvoice()
-  }, [])
+    getInvoice();
+  }, []);
+
+  useEffect(() => {
+    console.log(invoices == []);
+  }, [invoices]);
 
   return invoices == [] ? (
     <Dimmer active inverted>
