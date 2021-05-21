@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import {
   Menu,
   Sidebar,
@@ -51,7 +51,7 @@ function Nav({ children }) {
 
           <Link to="/">
             <Menu.Item>
-              <img src="/ubc.svg" />
+              <img src="/ubc.svg" alt="logo" />
             </Menu.Item>
           </Link>
 

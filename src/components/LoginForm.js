@@ -4,9 +4,6 @@ import {
   Form,
   Grid,
   Header,
-  Image,
-  Message,
-  Segment,
 } from "semantic-ui-react";
 import jwtDecode from "jwt-decode";
 import axiosInstance from "../axios/axios";

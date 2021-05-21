@@ -3,7 +3,7 @@ import { Grid, Segment, Statistic } from "semantic-ui-react";
 import Table from "../components/Table";
 import axiosInstance from "../axios/axios";
 
-function Home() {
+function HomeScreen() {
   const [isLoading, setIsLoading] = useState({
     dataLoaded: true,
     statusLoaded: true,
@@ -89,4 +89,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomeScreen;

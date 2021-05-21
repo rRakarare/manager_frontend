@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import MaterialTable from "material-table";
 import { useHistory } from "react-router-dom";
-import { Modal, Segment, Header, Button } from "semantic-ui-react";
+import { Modal, Button } from "semantic-ui-react";
 
 function Table({ data, status, isLoading }) {
   const [open, setOpen] = useState(false);
   const [delproject, setDelproject] = useState({});
   const history = useHistory();
-  console.log(data);
 
   const lookupstatus = {};
   status.forEach((item) => {

@@ -27,6 +27,9 @@ export const useAppStore = create(
     invoices: [],
     setInvoices: (invoices) => set((state) => ({ invoices })),
 
+    projectsteps: [],
+    setProjectsteps: (projectsteps) => set((state) => ({ projectsteps })),
+
     projectdata: {},
     setProjectdata: (projectdata) => set((state) => ({ projectdata })),
   }))

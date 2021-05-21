@@ -1,10 +1,9 @@
-import { useState } from "react";
 import Nav from "./components/Header";
 import LoginForm from "./components/LoginForm";
 import ProtectRoute from "./components/ProtectRoute";
 
-import Home from "./screens/Home";
-import ProjectDetail from "./screens/ProjectDetail";
+import HomeScreen from "./screens/HomeScreen";
+import ProjectDetailScreen from "./screens/ProjectDetailScreen";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 
 function App() {
@@ -14,12 +13,12 @@ function App() {
         <Nav>
           <div style={{ margin: "2rem" }}>
             <Switch>
-              <ProtectRoute asd="asdqwe123" exact path="/" component={Home} />
+              <ProtectRoute asd="asdqwe123" exact path="/" component={HomeScreen} />
               <ProtectRoute
                 asd="asdqwe123"
                 exact
                 path="/projects/:id"
-                component={ProjectDetail}
+                component={ProjectDetailScreen}
               />
               <Route exact path="/login">
                 <LoginForm />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useEffect} from "react";
 import { Route, Redirect } from "react-router-dom";
 import {useAppStore, checkAuth} from '../app.state'
 
@@ -15,7 +15,7 @@ function ProtectRoute({ component: Component, ...rest }) {
       setAuth(checkAuth())
     }
     
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Route
