@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { TemplateHandler } from "easy-template-x";
 var _ = require("lodash");
 
-const WordOffer = ({ filepath, filename, data }) => {
+const WordTemplateReplace = ({ filepath, filename, data, render }) => {
+
+
+
   const loadFile = async (url) => {
     const response = await fetch(url);
     const template = await response.blob();
@@ -63,7 +66,6 @@ const WordOffer = ({ filepath, filename, data }) => {
       }
     });
 
-    console.log(data);
 
     return data;
   };
@@ -78,7 +80,12 @@ const WordOffer = ({ filepath, filename, data }) => {
     saveFile(filename, doc);
   };
 
-  return <button onClick={() => generateDocument()}>Create Offer</button>;
+
+  return render(generateDocument);
 };
 
-export default WordOffer;
+WordTemplateReplace.defaultProps = {
+  render: (generateDocument) => (<button onClick={() => generateDocument()}>Word-Document</button>)
+}
+
+export default WordTemplateReplace;
