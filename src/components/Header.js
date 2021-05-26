@@ -72,14 +72,18 @@ function Nav({ children }) {
           style={{ backgroundColor: "white", paddingTop:53.63 }}
           
         >
-          <Menu.Item as="a">
+          <Link to="/">
+          <Menu.Item>
             <Icon name="home" />
             Home
           </Menu.Item>
+          </Link>
+          <Link to="/clients">
           <Menu.Item as="a">
             <Icon name="gamepad" />
-            Games
+            Kunden
           </Menu.Item>
+          </Link>
           <Menu.Item as="a">
             <Icon name="camera" />
             Channels
