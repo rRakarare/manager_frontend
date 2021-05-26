@@ -1,47 +1,39 @@
 import React from "react";
-import {
-  Menu,
-  Sidebar,
-  Dropdown,
-  Icon
-} from "semantic-ui-react";
+import { Menu, Sidebar, Dropdown, Icon } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
-import { useAppStore } from '../app.state'
+import { useAppStore } from "../app.state";
 
 function Nav({ children }) {
   const [visible, setVisible] = React.useState(false);
-  const auth = useAppStore(state=>state.auth)
-  const setAuth = useAppStore(state=>state.setAuth)
+  const auth = useAppStore((state) => state.auth);
+  const setAuth = useAppStore((state) => state.setAuth);
 
   const history = useHistory();
-  const username = localStorage.getItem('profile_name')
+  const username = localStorage.getItem("profile_name");
 
   const logout = () => {
-    setAuth(false)
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('profile_name')
-    history.push("/login")
-  }
+    setAuth(false);
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("profile_name");
+    history.push("/login");
+  };
 
-  const UserMenu =  (
+  const UserMenu = (
     <Menu.Menu position="right">
       <Dropdown item text={username}>
-      
         <Dropdown.Menu>
           <Dropdown.Item>Profile</Dropdown.Item>
-          <Dropdown.Item onClick={()=>logout()}>Logout</Dropdown.Item>
+          <Dropdown.Item onClick={() => logout()}>Logout</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </Menu.Menu>
-  )
-
+  );
 
   return (
     <>
       <div>
         <Menu style={{ margin: 0 }} fixed="top">
           <Menu.Item
-            
             onClick={() => {
               setVisible(!visible);
             }}
@@ -69,20 +61,19 @@ function Nav({ children }) {
           vertical
           visible={visible}
           width="thin"
-          style={{ backgroundColor: "white", paddingTop:53.63 }}
-          
+          style={{ backgroundColor: "white", paddingTop: 53.63 }}
         >
           <Link to="/">
-          <Menu.Item>
-            <Icon name="home" />
-            Home
-          </Menu.Item>
+            <Menu.Item as="a">
+              <Icon name="home" />
+              Home
+            </Menu.Item>
           </Link>
           <Link to="/clients">
-          <Menu.Item as="a">
-            <Icon name="gamepad" />
-            Kunden
-          </Menu.Item>
+            <Menu.Item as="a">
+              <Icon name="gamepad" />
+              Kunden
+            </Menu.Item>
           </Link>
           <Menu.Item as="a">
             <Icon name="camera" />
@@ -90,7 +81,11 @@ function Nav({ children }) {
           </Menu.Item>
         </Sidebar>
 
-        <Sidebar.Pusher style={{overflow: 'scroll', height: '100vh', paddingTop:53.63}}>{children}</Sidebar.Pusher>
+        <Sidebar.Pusher
+          style={{ overflow: "scroll", height: "100vh", paddingTop: 53.63 }}
+        >
+          {children}
+        </Sidebar.Pusher>
       </Sidebar.Pushable>
     </>
   );
