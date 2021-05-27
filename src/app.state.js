@@ -32,5 +32,15 @@ export const useAppStore = create(
 
     projectdata: {},
     setProjectdata: (projectdata) => set((state) => ({ projectdata })),
+
+    cropImage: null,
+    setCropImage: (cropImage) => set((state) => ({cropImage})),
+
+    cropModalOpen: false,
+    setCropModalOpen: (cropModalOpen) => set((state) => ({cropModalOpen})),
+
+    openClient: false,
+    setOpenClient: (openClient) => set((state) => ({openClient})),
+
   }))
 );

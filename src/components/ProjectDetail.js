@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Dimmer, Loader, Item, Button } from "semantic-ui-react";
+import { Dimmer, Loader, Item, Button, Image } from "semantic-ui-react";
 import axiosInstance from "../axios/axios";
 import { useAppStore } from "../app.state";
 import WordTemplateReplace from "../components/WordTemplateReplace";
@@ -58,6 +58,7 @@ function ProjectDetail({ projectID }) {
         <Item.Meta style={{ color: "grey", marginBottom: "1rem" }}>
           <span style={{ display: "block" }} className="cinema">
             <strong>Kunde: </strong>
+            <Image style={{height:"20px", display:'inline', margin:"0 .3rem 0 .3rem"}} src={projectdata.client.image} rounded />
             {projectdata.client.name}
           </span>
           <span style={{ display: "block" }} className="cinema">

@@ -1,116 +1,102 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState } from "react";
+import {
+
+  Modal,
+
+  Button,
+  Input,
+  Image,
+} from "semantic-ui-react";
 import axios from "axios";
-import { Gluejar } from "@charliewilco/gluejar";
-import { Slider } from "react-semantic-ui-range";
-import { Segment, Button } from "semantic-ui-react";
-import getCroppedImg from "../components/cropimage";
+import convert from 'image-file-resize';
 import axiosInstance from "../axios/axios";
-import Cropper from "react-easy-crop";
+import { useAppStore } from "../app.state";
+
+import CreateCrop from "./CreateCrop";
 
 function CreateClient() {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [image, setImage] = useState();
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
+  const [cropModalOpen, setCropModalOpen] = useAppStore((state) => [
+    state.cropModalOpen,
+    state.setCropModalOpen,
+  ]);
+  const [clientName, setClientName] = useState("");
+  const cropImage = useAppStore((state) => state.cropImage);
+  const setOpenClient = useAppStore((state) => state.setOpenClient);
 
-  const asdqwe = useRef();
-
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
-
-  const showCroppedImage = async () => {
-    const img = asdqwe.current.imageRef.currentSrc;
-    try {
-      const croppedImage = await getCroppedImg(img, croppedAreaPixels);
-      console.log("donee", { croppedImage });
-      setCroppedImage(croppedImage);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const settings = {
-    start: 0,
-    min: 0,
-    max: 3,
-    step: 0.01,
-    onChange: (value) => {
-      setZoom(value);
-    },
-  };
-
-  const postIt = async () => {
+  const postClient = async () => {
     const config = { headers: { "Content-Type": "multipart/form-data" } };
     const URL = "http://127.0.0.1:8000/api/kunden/";
-    const asd = new File([asdqwe], "name.png", { type: "image/png" });
-    console.log(asd);
+    const image = await fetch(cropImage)
+      .then((r) => r.blob())
+      .then(
+        (blobFile) => new File([blobFile], `${clientName}.png`, { type: "image/png" })
+      );
+
+    const resizedImage = await convert({ 
+        file: image,  
+        width: 300, 
+        height: 300, 
+        type: 'png'
+        })
+
     try {
       let formData = new FormData();
-      formData.append("image", asd);
-      formData.append("name", "yolo");
-      const res = await axios.post(URL, formData, config);
-      console.log(res);
+      formData.append("image", resizedImage);
+      formData.append("name", clientName);
+      await axiosInstance.post('/kunden/', formData);
+
+      setOpenClient(false)
     } catch (err) {
       console.log(err.response);
     }
   };
 
+  const addClient = () => {
+    postClient();
+  };
+
   return (
-    <>
-      <Gluejar onError={(err) => console.error(err)}>
-        {({ images }) => {
-          const image = images.slice(-1);
-
-          return (
-            <>
-              <Segment textAlign="center" compact style={{ padding: "1rem" }}>
-                <Slider
-                  style={{ marginBottom: "1rem" }}
-                  value={zoom}
-                  color="red"
-                  settings={settings}
-                />
-                <div
-                  style={{
-                    position: "relative",
-                    height: "250px",
-                    width: "250px",
-                  }}
-                >
-                  {images.length > 0 ? (
-                    <>
-                      <Cropper
-                        ref={asdqwe}
-                        image={image}
-                        crop={crop}
-                        zoom={zoom}
-                        min={1}
-                        max={3}
-                        restrictPosition={false}
-                        aspect={1}
-                        onCropChange={setCrop}
-                        onCropComplete={onCropComplete}
-                      />
-                    </>
-                  ) : null}
-                </div>
-                <Button
-                  style={{ marginTop: "1rem" }}
-                  onClick={() => showCroppedImage()}
-                >
-                  Cut Image
-                </Button>
-              </Segment>
-              <button onClick={() => postIt()}>Post</button>
-
-              <img src={croppedImage}></img>
-            </>
-          );
-        }}
-      </Gluejar>
-    </>
+    <div>
+      <div style={{ width: "250px" }}>
+        <Image
+          
+          fluid
+          src={
+            cropImage
+              ? cropImage
+              : "https://react.semantic-ui.com/images/wireframe/image.png"
+          }
+          onClick={() => setCropModalOpen(true)}
+          style={{ cursor: "pointer", padding: "1rem" }}
+        />
+        <Input
+          onChange={(e) => setClientName(e.target.value)}
+          fluid
+          placeholder="Name"
+        />
+        <Button
+          onClick={addClient}
+          style={{ display: "block", width: "100%", marginTop: ".5rem" }}
+          content="Erstellen"
+        />
+      </div>
+      <Modal
+        size="mini"
+        open={cropModalOpen}
+        onClose={() => setCropModalOpen(false)}
+      >
+        <Modal.Header>Trim Image</Modal.Header>
+        <Modal.Content
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CreateCrop />
+        </Modal.Content>
+      </Modal>
+    </div>
   );
 }
 

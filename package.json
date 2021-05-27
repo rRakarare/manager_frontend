@@ -11,6 +11,7 @@
     "axios": "^0.21.1",
     "easy-template-x": "^2.0.0",
     "file-system": "^2.2.2",
+    "image-file-resize": "^1.0.3",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "material-table": "^1.69.3",
