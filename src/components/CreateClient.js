@@ -1,14 +1,7 @@
 import React, { useState } from "react";
-import {
-
-  Modal,
-
-  Button,
-  Input,
-  Image,
-} from "semantic-ui-react";
+import { Modal, Button, Input, Image, Form } from "semantic-ui-react";
 import axios from "axios";
-import convert from 'image-file-resize';
+import convert from "image-file-resize";
 import axiosInstance from "../axios/axios";
 import { useAppStore } from "../app.state";
 
@@ -20,46 +13,44 @@ function CreateClient() {
     state.setCropModalOpen,
   ]);
   const [clientName, setClientName] = useState("");
+  const [error, setError] = useState({});
   const cropImage = useAppStore((state) => state.cropImage);
   const setOpenClient = useAppStore((state) => state.setOpenClient);
 
   const postClient = async () => {
-    const config = { headers: { "Content-Type": "multipart/form-data" } };
-    const URL = "http://127.0.0.1:8000/api/kunden/";
-    const image = await fetch(cropImage)
-      .then((r) => r.blob())
-      .then(
-        (blobFile) => new File([blobFile], `${clientName}.png`, { type: "image/png" })
-      );
-
-    const resizedImage = await convert({ 
-        file: image,  
-        width: 300, 
-        height: 300, 
-        type: 'png'
-        })
-
+    console.log(cropImage);
     try {
       let formData = new FormData();
-      formData.append("image", resizedImage);
+      if (cropImage != null) {
+        const image = await fetch(cropImage)
+          .then((r) => r.blob())
+          .then(
+            (blobFile) =>
+              new File([blobFile], `${clientName}.png`, { type: "image/png" })
+          );
+
+        const resizedImage = await convert({
+          file: image,
+          width: 300,
+          height: 300,
+          type: "png",
+        });
+        formData.append("image", resizedImage);
+      }
       formData.append("name", clientName);
-      await axiosInstance.post('/kunden/', formData);
+      await axiosInstance.post("/kunden/", formData);
 
-      setOpenClient(false)
+      setOpenClient(false);
     } catch (err) {
-      console.log(err.response);
+      console.log(err);
+      setError(err.response.data);
     }
-  };
-
-  const addClient = () => {
-    postClient();
   };
 
   return (
     <div>
       <div style={{ width: "250px" }}>
         <Image
-          
           fluid
           src={
             cropImage
@@ -69,13 +60,16 @@ function CreateClient() {
           onClick={() => setCropModalOpen(true)}
           style={{ cursor: "pointer", padding: "1rem" }}
         />
-        <Input
-          onChange={(e) => setClientName(e.target.value)}
-          fluid
-          placeholder="Name"
-        />
+        <Form>
+          <Form.Field
+            onChange={(e) => setClientName(e.target.value)}
+            control={Input}
+            error={error.name && { content: error.name, pointing: "below" }}
+            placeholder="Name"
+          />
+        </Form>
         <Button
-          onClick={addClient}
+          onClick={() => postClient()}
           style={{ display: "block", width: "100%", marginTop: ".5rem" }}
           content="Erstellen"
         />
