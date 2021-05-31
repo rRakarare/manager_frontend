@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Form,
@@ -13,8 +13,9 @@ import { useAppStore } from '../app.state'
 function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const setAuth = useAppStore(state=>state.setAuth)
+  const [auth,setAuth] = useAppStore(state=>[state.auth,state.setAuth])
 
   const history = useHistory();
 
@@ -32,12 +33,17 @@ function LoginForm() {
         const name = jwtDecode(res.data.access).name
         localStorage.setItem("profile_name", name);
         setAuth(true);
-        history.push("/");
+        history.push("/")
+        
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.response.data);
+      setError(err.response.data);
     }
   };
+
+
+
 
   return (
     <Grid textAlign="center" style={{ height: "80%", maxWidth:"100%" }} verticalAlign="middle">
@@ -56,6 +62,7 @@ function LoginForm() {
           />
           <Form.Input
             fluid
+            error={error.detail && {content:error.detail}}
             icon="lock"
             iconPosition="left"
             placeholder="Password"

@@ -41,8 +41,12 @@ function ClientScreen() {
             <Portal open={openClient}>
             <Segment
               style={{
-                left: '40%',
+                left: 0,
+                right: 0,
+                marginLeft: 'auto',
+                marginRight: 'auto',
                 position: 'fixed',
+                width: "280px",
                 top: '20%',
                 zIndex: 1000,
               }}
