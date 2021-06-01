@@ -42,5 +42,8 @@ export const useAppStore = create(
     openClient: false,
     setOpenClient: (openClient) => set((state) => ({openClient})),
 
+    projectModalOpen: false,
+    setProjectModalOpen: (projectModalOpen) => set((state) => ({projectModalOpen})),
+
   }))
 );

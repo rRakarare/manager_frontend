@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Segment, Statistic } from "semantic-ui-react";
+import { Grid, Segment, Statistic, Modal } from "semantic-ui-react";
 import Table from "../components/Table";
 import axiosInstance from "../axios/axios";
+import CreateProject from '../components/CreateProject'
+import { useAppStore } from "../app.state";
 
 function HomeScreen() {
+  const [projectModalOpen,setProjectModalOpen] = useAppStore(state => [state.projectModalOpen,state.setProjectModalOpen])
   const [isLoading, setIsLoading] = useState({
     dataLoaded: true,
     statusLoaded: true,
@@ -44,7 +47,7 @@ function HomeScreen() {
   useEffect(() => {
     getProjektData();
     getStatus();
-  }, []);
+  }, [projectModalOpen]);
 
   const SegmentStyle = {
     display: "flex",
@@ -53,6 +56,7 @@ function HomeScreen() {
   };
 
   return (
+    <>
     <Grid stackable columns={3}>
       <Grid.Row stretched>
         <Grid.Column width={13}>
@@ -86,6 +90,10 @@ function HomeScreen() {
         </Grid.Column>
       </Grid.Row>
     </Grid>
+    <Modal open={projectModalOpen}>
+    <CreateProject/>
+    </Modal>
+    </>
   );
 }
 

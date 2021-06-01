@@ -15,6 +15,7 @@ function ClientTable({ data }) {
         columns={[
         { title: "Logo", field: "image", render: rowData => <Image src={rowData.image} style={{height:"40px"}} rounded /> },
           { title: "Kunde", field: "name" },
+          { title: "Kürzel", field: "short" },
           
 
         ]}

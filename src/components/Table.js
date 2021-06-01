@@ -2,48 +2,16 @@ import React, { useState, useEffect } from "react";
 import MaterialTable from "material-table";
 import { useHistory } from "react-router-dom";
 import useForceUpdate from 'use-force-update';
-import axiosInstance from '../axios/axios'
-import { Modal, Button, Form, Checkbox, Select } from "semantic-ui-react";
+import { useAppStore } from "../app.state";
+import { Modal, Button, Form, Dropdown } from "semantic-ui-react";
 
 function Table({ data, status, isLoading }) {
   const [open, setOpen] = useState(false);
-  const [openNew, setOpenNew] = useState(false);
   const [delproject, setDelproject] = useState({});
-  const [newdata, setNewdata] = useState({});
-  const [clients, setClients] = useState([])
-  const forceUpdate = useForceUpdate();
   const history = useHistory();
+  const setProjectModalOpen = useAppStore(state => state.setProjectModalOpen)
 
-  const AddProject = async () => {
-    try {
-      const res = await axiosInstance.post('/addProject/',{...newdata, project_number:newdata.title + "220"})
-      setOpenNew(false)
-
-
-    } catch(err) {
-      console.log(err.response)
-    }
-  }
-
-  const queryClients = async () => {
-    try {
-      const res = await axiosInstance.get('/clients/')
-      setClients(res.data.map(item => {
-        return {
-          value : item.id,
-          image : item.image,
-          text:item.name
-        }
-      }))
-    } catch(err) {
-      console.log(err.response)
-    }
-  }
-
-  useEffect(() => {
-    queryClients()
-
-  }, [])
+  
 
   const lookupstatus = {};
   status.forEach((item) => {
@@ -93,7 +61,7 @@ function Table({ data, status, isLoading }) {
             tooltip: "Neues Projekt",
             isFreeAction: true,
             onClick: () => {
-              setOpenNew(true);
+              setProjectModalOpen(true);
             },
           },
           {
@@ -107,29 +75,7 @@ function Table({ data, status, isLoading }) {
           },
         ]}
       />
-      <Modal open={openNew} onClose={() => setOpenNew(false)}>
-        <Modal.Header>Neues Projekt</Modal.Header>
-        <Modal.Content>
-          <Form>
-            <Form.Field>
-              <label>Title</label>
-              <input onChange={(e)=>setNewdata(state => ({...state, title:e.target.value}))} placeholder="Title" />
-            </Form.Field>
-            <Form.Field>
-              <label>Kunde</label>
-              <Select onChange={(e, result)=>setNewdata(state => ({...state, client:result.value}))} fluid placeholder='Kunde auswählen' options={clients} />
-            </Form.Field>
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button negative onClick={() => setOpenNew(false)}>
-            Abbrechen
-          </Button>
-          <Button positive onClick={() => AddProject()}>
-            Projekt anlegen
-          </Button>
-        </Modal.Actions>
-      </Modal>
+
 
       <Modal open={open} onClose={() => setOpen(false)}>
         <Modal.Header>Projekt löschen</Modal.Header>

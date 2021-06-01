@@ -13,6 +13,7 @@ function CreateClient() {
     state.setCropModalOpen,
   ]);
   const [clientName, setClientName] = useState("");
+  const [clientShort, setClientShort] = useState("");
   const [error, setError] = useState({});
   const cropImage = useAppStore((state) => state.cropImage);
   const setOpenClient = useAppStore((state) => state.setOpenClient);
@@ -38,11 +39,12 @@ function CreateClient() {
         formData.append("image", resizedImage);
       }
       formData.append("name", clientName);
+      formData.append("short", clientShort);
       await axiosInstance.post("/kunden/", formData);
 
       setOpenClient(false);
     } catch (err) {
-      console.log(err);
+      console.log(err.response);
       setError(err.response.data);
     }
   };
@@ -55,7 +57,7 @@ function CreateClient() {
           src={
             cropImage
               ? cropImage
-              : "https://react.semantic-ui.com/images/wireframe/image.png"
+              : "/smile.png"
           }
           onClick={() => setCropModalOpen(true)}
           style={{ cursor: "pointer", padding: "1rem" }}
@@ -63,9 +65,17 @@ function CreateClient() {
         <Form>
           <Form.Field
             onChange={(e) => setClientName(e.target.value)}
+            value={clientName}
             control={Input}
             error={error.name && { content: error.name, pointing: "below" }}
             placeholder="Name"
+          />
+          <Form.Field
+            onChange={(e) => setClientShort(e.target.value)}
+            value={clientShort}
+            control={Input}
+            error={error.short && { content: error.short, pointing: "below" }}
+            placeholder="Kürzel"
           />
         </Form>
         <Button
