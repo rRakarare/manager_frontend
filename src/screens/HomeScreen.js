@@ -13,6 +13,11 @@ function HomeScreen() {
   });
   const [data, setData] = useState([]);
   const [status, setStatus] = useState([]);
+  const [rerender, setRerender] = useState(0)
+
+  const rerenderfunc = () => {
+    setRerender(inital => inital + 1)
+  }
 
   const getStatus = async () => {
     try {
@@ -47,7 +52,7 @@ function HomeScreen() {
   useEffect(() => {
     getProjektData();
     getStatus();
-  }, [projectModalOpen]);
+  }, [projectModalOpen,rerender]);
 
   const SegmentStyle = {
     display: "flex",
@@ -60,7 +65,7 @@ function HomeScreen() {
     <Grid stackable columns={3}>
       <Grid.Row stretched>
         <Grid.Column width={13}>
-          <Table data={data} isLoading={isLoading} status={status} />
+          <Table data={data} isLoading={isLoading} status={status} rerenderfunc={rerenderfunc}/>
         </Grid.Column>
         <Grid.Column width={3}>
           <Segment

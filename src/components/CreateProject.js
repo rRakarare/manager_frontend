@@ -16,7 +16,7 @@ function CreateProject() {
         try {
 
 
-          const res = await axiosInstance.post('/addProject/',{...newdata})
+          const res = await axiosInstance.post('/addProject/',{...newdata, status:1})
           setProjectModalOpen(false)
     
         } catch(err) {
