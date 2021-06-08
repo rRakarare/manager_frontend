@@ -1,8 +1,18 @@
-import React, { useEffect } from "react";
-import { Dimmer, Loader, Item, Button, Image } from "semantic-ui-react";
+import React, { useEffect, useState } from "react";
+import {
+  Dimmer,
+  Loader,
+  Item,
+  Button,
+  Image,
+  Modal,
+  List,
+  Icon
+} from "semantic-ui-react";
 import axiosInstance from "../axios/axios";
 import { useAppStore } from "../app.state";
 import WordTemplateReplace from "../components/WordTemplateReplace";
+import ProjectEdit from "../components/ProjectEdit";
 
 var _ = require("lodash/core");
 
@@ -27,6 +37,11 @@ function ProjectDetail({ projectID }) {
     state.setProjectdata,
   ]);
 
+  const [editModalOpen, setEditModalOpen] = useAppStore((state) => [
+    state.editModalOpen,
+    state.setEditModalOpen,
+  ]);
+
   const getProjectData = async () => {
     try {
       const res = await axiosInstance.get(`projects/${projectID}/`);
@@ -43,56 +58,80 @@ function ProjectDetail({ projectID }) {
 
   useEffect(() => {
     getProjectData();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [editModalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return _.isEmpty(projectdata) ? (
     <Dimmer active inverted>
       <Loader size="medium">Loading</Loader>
     </Dimmer>
   ) : (
-    <Item>
-      <Item.Content>
-        <Item.Header style={{ fontSize: "1.4rem", marginBottom: "1rem" }}>
-          {projectdata.title}
-        </Item.Header>
-        <Item.Meta style={{ color: "grey", marginBottom: "1rem" }}>
-          <span style={{ display: "block" }} className="cinema">
-            <strong>Kunde: </strong>
-            <Image style={{height:"20px", display:'inline', margin:"0 .3rem 0 .3rem"}} src={projectdata.client.image} rounded />
-            {projectdata.client.name}
-          </span>
-          <span style={{ display: "block" }} className="cinema">
-            <strong>Erstellt: </strong>
-            {date}
-          </span>
-        </Item.Meta>
+    <>
+      <List divided relaxed>
+        <List.Item>
+          
+          <List.Content>
+            <List.Header as="h2">{projectdata.title}</List.Header>
+            <List.Description as="p"><strong>Erstellt:</strong> {date}</List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item>
+          <Image rounded style={{width:"23.625px", marginRight:"6px"}} src={projectdata.client.image}/>
+          <List.Content>
+            <List.Header as="h3">{projectdata.client.name}</List.Header>
+          </List.Content>
+        </List.Item>
+        <List.Item>
+          <List.Icon name="eur" size="large" verticalAlign="middle" />
+          <List.Content>
+            <List.Header style={{marginLeft:"11px"}} as="h4">Honorar</List.Header>
+            <List.Description style={{marginLeft:"11px"}}><strong style={{color:"green"}}>20,000</strong></List.Description>
 
-        <Item.Extra>
+          </List.Content>
+        </List.Item>
+        <List.Item>
+          <List.Icon name="map" size="large" verticalAlign="middle" />
+          <List.Content>
+            <List.Header as="h4">Anschrift</List.Header>
+            <List.Description><strong>Straße: </strong>{projectdata.street} {projectdata.street && <Icon color="green" name="check"/>}</List.Description>
+            <List.Description><strong>Plz: </strong>{projectdata.plz} {projectdata.plz && <Icon color="green" name="check"/>}</List.Description>
+            <List.Description><strong>Ort: </strong>{projectdata.place} {projectdata.place && <Icon color="green" name="check"/>}</List.Description>
+            <List.Description><strong>Kontakt: </strong>{projectdata.contact} {projectdata.contact && <Icon color="green" name="check"/>}</List.Description>
+
+          </List.Content>
+        </List.Item>
+        <List.Item>
+          <List.Content>
           <Button
-            style={{ display: "block", marginBottom: ".3rem" }}
-            icon="edit"
-            content="Bearbeiten"
-          />
-          <WordTemplateReplace
-            filepath="/test.docx"
-            filename="asdqwe.docx"
-            data={dataold}
-            render={(generateDocument) => {
-              return (
-                <Button
-                
-                  icon="file word"
-                  content="Angebot erstellen"
-                  color="blue"
-                  style={{ display: "block", marginBottom: ".3rem" }}
-                  onClick={() => generateDocument()}
-                />
-              );
-            }}
-          />
-        </Item.Extra>
-      </Item.Content>
-    </Item>
+              style={{ marginBottom: ".3rem" }}
+              icon="edit"
+              content="edit"
+              onClick={() => setEditModalOpen(true)}
+            />
+            <WordTemplateReplace
+              filepath="/test.docx"
+              filename="asdqwe.docx"
+              data={dataold}
+              render={(generateDocument) => {
+                return (
+                  <Button
+                    icon="file word"
+                    content="offer"
+                    color="blue"
+                    style={{ marginBottom: ".3rem" }}
+                    onClick={() => generateDocument()}
+                  />
+                );
+              }}
+            />
+
+          </List.Content>
+        </List.Item>
+      </List>
+      
+      <Modal open={editModalOpen}>
+        <ProjectEdit />
+      </Modal>
+    </>
   );
 }
 

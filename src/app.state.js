@@ -45,5 +45,8 @@ export const useAppStore = create(
     projectModalOpen: false,
     setProjectModalOpen: (projectModalOpen) => set((state) => ({projectModalOpen})),
 
+    editModalOpen: false,
+    setEditModalOpen: (editModalOpen) => set((state) => ({editModalOpen})),
+
   }))
 );

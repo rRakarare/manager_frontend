@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Modal, Button, Input, Image, Form } from "semantic-ui-react";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Input, Image, Form, Dropdown } from "semantic-ui-react";
 import axios from "axios";
 import convert from "image-file-resize";
 import axiosInstance from "../axios/axios";
@@ -17,6 +17,19 @@ function CreateClient() {
   const [error, setError] = useState({});
   const cropImage = useAppStore((state) => state.cropImage);
   const setOpenClient = useAppStore((state) => state.setOpenClient);
+  const [artikels, setArtikels] = useState([])
+  const [clientArtikel, setClientArtikel] = useState()
+
+  const getArtikels = async () => {
+    try {
+      const res = await axiosInstance.get('/artikel/')
+      console.log(res.data)
+      setArtikels(res.data)
+
+    } catch(err) {
+      console.log(err)
+    }
+  }
 
   const postClient = async () => {
     console.log(cropImage);
@@ -39,7 +52,7 @@ function CreateClient() {
         formData.append("image", resizedImage);
       }
       formData.append("name", clientName);
-      formData.append("short", clientShort);
+      formData.append("artikel", clientArtikel);
       await axiosInstance.post("/kunden/", formData);
 
       setOpenClient(false);
@@ -48,6 +61,10 @@ function CreateClient() {
       setError(err.response.data);
     }
   };
+
+  useEffect(() => {
+    getArtikels()
+  }, [])
 
   return (
     <div>
@@ -71,11 +88,23 @@ function CreateClient() {
             placeholder="Name"
           />
           <Form.Field
-            onChange={(e) => setClientShort(e.target.value)}
-            value={clientShort}
-            control={Input}
-            error={error.short && { content: error.short, pointing: "below" }}
-            placeholder="Kürzel"
+            selection
+            control={Dropdown}
+            // error={
+            //   error.project_type && {
+            //     content: error.project_type,
+            //     pointing: "below",
+            //   }
+            // }
+            onChange={(e, result) =>
+              setClientArtikel(result.value)
+            }
+            fluid
+            placeholder="Artikel (z.B. das Klinikum)"
+            options={artikels.map(item => ({
+              value:item.id,
+              text:item.nominativ
+            }))}
           />
         </Form>
         <Button
