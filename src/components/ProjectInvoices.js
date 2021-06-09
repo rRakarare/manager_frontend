@@ -12,11 +12,21 @@ import MaterialTable from "material-table";
 import axiosInstance from "../axios/axios";
 import { useAppStore } from "../app.state";
 import WordTemplateReplace from "../components/WordTemplateReplace";
+import CreateInvoice from '../components/CreateInvoice'
+import EditInvoice from '../components/EditInvoice'
 
 function ProjectInvoices({ projectID }) {
   const [invoices, setInvoices] = useAppStore((state) => [
     state.invoices,
     state.setInvoices,
+  ]);
+  const [invoiceCreateModel, setInvoiceCreateModel] = useAppStore((state) => [
+    state.invoiceCreateModel,
+    state.setInvoiceCreateModel,
+  ]);
+  const [invoiceEditModel, setInvoiceEditModel] = useAppStore((state) => [
+    state.invoiceEditModel,
+    state.setInvoiceEditModel,
   ]);
   const [isLoading, setIsLoading] = useState(true);
   const [openDel, setOpenDel] = useState(false);
@@ -53,6 +63,15 @@ function ProjectInvoices({ projectID }) {
     }
   };
 
+  const deleteInvoice = async (id) => {
+    try {
+      await axiosInstance.delete(`invoices/${id}`)
+    } catch(err) {
+      return err.response
+    }
+    setOpenDel(false)
+  }
+
   const upDateInvoiceStatus = async (id) => {
     try {
       const invoiceindex = invoices.findIndex((item) => item.id === id);
@@ -75,8 +94,11 @@ function ProjectInvoices({ projectID }) {
 
   useEffect(() => {
     getInvoice();
+  }, [invoiceCreateModel, openDel, invoiceEditModel]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+
     console.log(invoices)
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [invoices]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -116,7 +138,7 @@ function ProjectInvoices({ projectID }) {
               tooltip: "Bearbeiten",
               onClick: (event, rowData) => {
                 setClickedInvoice(rowData);
-                setOpenEdit(true);
+                setInvoiceEditModel(true);
               },
             },
             {
@@ -133,7 +155,7 @@ function ProjectInvoices({ projectID }) {
               tooltip: "Neue Rechnung",
               color: "grey",
               isFreeAction: true,
-              onClick: (event) => alert("You want to add a new row"),
+              onClick: (event) => setInvoiceCreateModel(true),
             },
           ]}
           components={{
@@ -194,23 +216,18 @@ function ProjectInvoices({ projectID }) {
           <Button negative onClick={() => setOpenDel(false)}>
             Disagree
           </Button>
-          <Button positive onClick={() => setOpenDel(false)}>
+          <Button positive onClick={() => deleteInvoice(clickedInvoice.id)}>
             Agree
           </Button>
         </Modal.Actions>
       </Modal>
 
-      <Modal open={openEdit} onClose={() => setOpenEdit(false)}>
-        <Modal.Header>Rechnung {clickedInvoice.title} bearbeiten</Modal.Header>
-        <Modal.Content>Rechnung wirklich löschen ?</Modal.Content>
-        <Modal.Actions>
-          <Button negative onClick={() => setOpenEdit(false)}>
-            Disagree
-          </Button>
-          <Button positive onClick={() => setOpenEdit(false)}>
-            Agree
-          </Button>
-        </Modal.Actions>
+      <Modal open={invoiceEditModel} onClose={() => setInvoiceEditModel(false)}>
+        <EditInvoice invoiceID={clickedInvoice.id}/>
+      </Modal>
+
+      <Modal open={invoiceCreateModel} onClose={() => setInvoiceCreateModel(false)}>
+        <CreateInvoice/>
       </Modal>
     </>
   );

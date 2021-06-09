@@ -48,5 +48,11 @@ export const useAppStore = create(
     editModalOpen: false,
     setEditModalOpen: (editModalOpen) => set((state) => ({editModalOpen})),
 
+    invoiceCreateModel: false,
+    setInvoiceCreateModel: (invoiceCreateModel) => set((state) => ({invoiceCreateModel})),
+
+    invoiceEditModel: false,
+    setInvoiceEditModel: (invoiceEditModel) => set((state) => ({invoiceEditModel})),
+
   }))
 );
