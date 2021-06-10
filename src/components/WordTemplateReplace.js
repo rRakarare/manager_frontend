@@ -44,24 +44,26 @@ const WordTemplateReplace = ({ filepath, filename, data, render }) => {
   const datanew = async () => {
     const allkeys = Object.keys(data);
     allkeys.forEach((key) => {
-      if (_.isArray(data[key])) {
-        data[key].forEach((subobject, subindex) => {
-          const subkeys = Object.keys(subobject);
-          subkeys.forEach((subkey) => {
-            if (data[key][subindex][subkey].isImage) {
-              getImage(
-                data[key][subindex][subkey].url,
-                data[key][subindex][subkey].width,
-                data[key][subindex][subkey].height
-              ).then((res) => (data[key][subindex][subkey] = res));
-            }
+      if (data[key]){
+        if (_.isArray(data[key])) {
+          data[key].forEach((subobject, subindex) => {
+            const subkeys = Object.keys(subobject);
+            subkeys.forEach((subkey) => {
+              if (data[key][subindex][subkey].isImage) {
+                getImage(
+                  data[key][subindex][subkey].url,
+                  data[key][subindex][subkey].width,
+                  data[key][subindex][subkey].height
+                ).then((res) => (data[key][subindex][subkey] = res));
+              }
+            });
           });
-        });
-      } else {
-        if (data[key].isImage) {
-          getImage(data[key].url, data[key].width, data[key].height).then(
-            (res) => (data[key] = res)
-          );
+        } else {
+          if (data[key].isImage) {
+            getImage(data[key].url, data[key].width, data[key].height).then(
+              (res) => (data[key] = res)
+            );
+          }
         }
       }
     });

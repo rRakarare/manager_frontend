@@ -7,7 +7,7 @@ import {
   Image,
   Modal,
   List,
-  Icon
+  Icon,
 } from "semantic-ui-react";
 import axiosInstance from "../axios/axios";
 import { useAppStore } from "../app.state";
@@ -42,6 +42,12 @@ function ProjectDetail({ projectID }) {
     state.setEditModalOpen,
   ]);
 
+  const invoices = useAppStore((state) => state.invoices);
+
+  let honorar = 0;
+
+  invoices.forEach(item => honorar += parseFloat(item.amount))
+
   const getProjectData = async () => {
     try {
       const res = await axiosInstance.get(`projects/${projectID}/`);
@@ -68,14 +74,19 @@ function ProjectDetail({ projectID }) {
     <>
       <List divided relaxed>
         <List.Item>
-          
           <List.Content>
             <List.Header as="h2">{projectdata.title}</List.Header>
-            <List.Description as="p"><strong>Erstellt:</strong> {date}</List.Description>
+            <List.Description as="p">
+              <strong>Erstellt:</strong> {date}
+            </List.Description>
           </List.Content>
         </List.Item>
         <List.Item>
-          <Image rounded style={{width:"23.625px", marginRight:"6px"}} src={projectdata.client.image}/>
+          <Image
+            rounded
+            style={{ width: "23.625px", marginRight: "6px" }}
+            src={projectdata.client.image}
+          />
           <List.Content>
             <List.Header as="h3">{projectdata.client.name}</List.Header>
           </List.Content>
@@ -83,25 +94,43 @@ function ProjectDetail({ projectID }) {
         <List.Item>
           <List.Icon name="eur" size="large" verticalAlign="middle" />
           <List.Content>
-            <List.Header style={{marginLeft:"11px"}} as="h4">Honorar</List.Header>
-            <List.Description style={{marginLeft:"11px"}}><strong style={{color:"green"}}>20,000</strong></List.Description>
-
+            <List.Header style={{ marginLeft: "11px" }} as="h4">
+              Honorar
+            </List.Header>
+            <List.Description style={{ marginLeft: "11px" }}>
+              <strong style={{ color: "green" }}>{honorar.toLocaleString('de') + " €"}</strong>
+            </List.Description>
           </List.Content>
         </List.Item>
         <List.Item>
           <List.Icon name="map" size="large" verticalAlign="middle" />
           <List.Content>
             <List.Header as="h4">Anschrift</List.Header>
-            <List.Description><strong>Straße: </strong>{projectdata.street} {projectdata.street && <Icon color="green" name="check"/>}</List.Description>
-            <List.Description><strong>Plz: </strong>{projectdata.plz} {projectdata.plz && <Icon color="green" name="check"/>}</List.Description>
-            <List.Description><strong>Ort: </strong>{projectdata.place} {projectdata.place && <Icon color="green" name="check"/>}</List.Description>
-            <List.Description><strong>Kontakt: </strong>{projectdata.contact} {projectdata.contact && <Icon color="green" name="check"/>}</List.Description>
-
+            <List.Description>
+              <strong>Straße: </strong>
+              {projectdata.street}{" "}
+              {projectdata.street && <Icon color="green" name="check" />}
+            </List.Description>
+            <List.Description>
+              <strong>Plz: </strong>
+              {projectdata.plz}{" "}
+              {projectdata.plz && <Icon color="green" name="check" />}
+            </List.Description>
+            <List.Description>
+              <strong>Ort: </strong>
+              {projectdata.place}{" "}
+              {projectdata.place && <Icon color="green" name="check" />}
+            </List.Description>
+            <List.Description>
+              <strong>Kontakt: </strong>
+              {projectdata.contact}{" "}
+              {projectdata.contact && <Icon color="green" name="check" />}
+            </List.Description>
           </List.Content>
         </List.Item>
         <List.Item>
           <List.Content>
-          <Button
+            <Button
               style={{ marginBottom: ".3rem" }}
               icon="edit"
               content="edit"
@@ -123,11 +152,10 @@ function ProjectDetail({ projectID }) {
                 );
               }}
             />
-
           </List.Content>
         </List.Item>
       </List>
-      
+
       <Modal open={editModalOpen}>
         <ProjectEdit />
       </Modal>

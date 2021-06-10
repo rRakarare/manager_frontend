@@ -12,10 +12,18 @@ import MaterialTable from "material-table";
 import axiosInstance from "../axios/axios";
 import { useAppStore } from "../app.state";
 import WordTemplateReplace from "../components/WordTemplateReplace";
-import CreateInvoice from '../components/CreateInvoice'
-import EditInvoice from '../components/EditInvoice'
+import CreateInvoice from "../components/CreateInvoice";
+import EditInvoice from "../components/EditInvoice";
+
+
 
 function ProjectInvoices({ projectID }) {
+
+  var formatter = new Intl.NumberFormat('de', {
+    style: 'currency',
+    currency: 'EUR',
+  });
+
   const [invoices, setInvoices] = useAppStore((state) => [
     state.invoices,
     state.setInvoices,
@@ -28,23 +36,46 @@ function ProjectInvoices({ projectID }) {
     state.invoiceEditModel,
     state.setInvoiceEditModel,
   ]);
+
+  const [invoiceStati, setInvoiceStati] = useAppStore((state) => [
+    state.invoiceStati,
+    state.setInvoiceStati,
+  ]);
+
+  const [artikels, setArtikels] = useState([])
+
+  const projectdata = useAppStore((state) => state.projectdata);
+
+  const getArtikels = async () => {
+    try {
+      const res = await axiosInstance.get('/artikel/')
+      setArtikels(res.data)
+
+    } catch(err) {
+      console.log(err)
+    }
+  }
+
+  const getInvoiceStati = async () => {
+    try {
+      const res = await axiosInstance.get("/invoicestatus/");
+      setInvoiceStati(
+        res.data.map((item) => ({
+          value: item.id,
+          text: item.name,
+          icon: item.icontext,
+        }))
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const [isLoading, setIsLoading] = useState(true);
   const [openDel, setOpenDel] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
   const [clickedInvoice, setClickedInvoice] = useState({});
 
-
   const dataold = {
-    loop: [
-      {
-        name: "rene",
-        image: { isImage: true, url: "/smile.png", width: 200, height: 200 },
-      },
-      {
-        name: "couti",
-        image: { isImage: true, url: "/logo512.png", width: 200, height: 200 },
-      },
-    ],
     asdqwe: { isImage: true, url: "/logo512.png", width: 200, height: 200 },
     qwe2: "Hello World",
   };
@@ -65,12 +96,12 @@ function ProjectInvoices({ projectID }) {
 
   const deleteInvoice = async (id) => {
     try {
-      await axiosInstance.delete(`invoices/${id}`)
-    } catch(err) {
-      return err.response
+      await axiosInstance.delete(`invoices/${id}`);
+    } catch (err) {
+      return err.response;
     }
-    setOpenDel(false)
-  }
+    setOpenDel(false);
+  };
 
   const upDateInvoiceStatus = async (id) => {
     try {
@@ -93,11 +124,15 @@ function ProjectInvoices({ projectID }) {
   };
 
   useEffect(() => {
+    getInvoiceStati();
+    getArtikels();
+  }, []);
+
+  useEffect(() => {
     getInvoice();
   }, [invoiceCreateModel, openDel, invoiceEditModel]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-
-    console.log(invoices)
+    console.log(invoices);
   }, [invoices]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -119,9 +154,50 @@ function ProjectInvoices({ projectID }) {
               type: "currency",
               currencySetting: { locale: "de", currencyCode: "EUR" },
             },
-            { title: "Status", field: "status" },
+            {
+              title: "Status",
+              field: "status",
+              render: (rowData) => {
+                const status = invoiceStati.find(
+                  (item) => item.value === rowData.status
+                );
+                return (
+                  <>
+                    <span style={{ marginRight: ".2rem" }}>{status && status.text}</span>
+                    <Icon
+                      color={status &&
+                        status.value === 3
+                          ? "green"
+                          : status && status.value === 2
+                          ? "yellow"
+                          : "black"
+                      }
+                      name={status && status.icon}
+                    />
+                  </>
+                );
+              },
+            },
             { title: "Stellung", field: "date_of_invoicing", type: "date" },
-            { title: "Eingang", field: "date_of_payment", type: "date" },
+            {
+              title: "Eingang",
+              field: "date_of_payment",
+              type: "date",
+              render: (rowData) => {
+                const date = new Date(
+                  rowData.date_of_payment
+                ).toLocaleDateString("de");
+                return (
+                  <span
+                    style={{
+                      color: rowData.status === 3 ? "#016936" : "#FFD700",
+                    }}
+                  >
+                    {date}
+                  </span>
+                );
+              },
+            },
           ]}
           actions={[
             {
@@ -160,18 +236,36 @@ function ProjectInvoices({ projectID }) {
           ]}
           components={{
             Action: (props) => {
+              const invoice = props.data;
+              const artikel = artikels.find(item => projectdata.client && item.id === projectdata.client.artikel)
+              const newData = {
+                date: new Date().toLocaleDateString("de"),
+                logo: { isImage: true, url: projectdata.client && projectdata.client.image, width: 20, height: 20 },
+                invoice_number: invoice.invoice_number,
+                netto: formatter.format(invoice.amount),
+                tax: formatter.format(invoice.amount * 0.19),
+                brutto: formatter.format(invoice.amount * 1.19),
+                clientname: projectdata.client && projectdata.client.name,
+                project_number: projectdata.project_number,
+                title: projectdata.title,
+                artikel: artikel && artikel.nominativ,
+                street: projectdata.street,
+                plz: projectdata.plz,
+                place: projectdata.place,
+                contact: projectdata.contact,
+              };
               return props.action.icon === "word" ? (
                 <WordTemplateReplace
-                  filepath="/test.docx"
+                  filepath="/re_vorlage.docx"
                   filename="asdqwe.docx"
-                  data={dataold}
+                  data={newData}
                   render={(generateDocument) => {
                     return (
                       <Icon
                         name="file word"
-                        size='large'                
+                        size="large"
                         color="blue"
-                        style={{ cursor:'pointer' }}
+                        style={{ cursor: "pointer" }}
                         onClick={() => generateDocument()}
                       />
                     );
@@ -223,11 +317,14 @@ function ProjectInvoices({ projectID }) {
       </Modal>
 
       <Modal open={invoiceEditModel} onClose={() => setInvoiceEditModel(false)}>
-        <EditInvoice invoiceID={clickedInvoice.id}/>
+        <EditInvoice invoiceID={clickedInvoice.id} />
       </Modal>
 
-      <Modal open={invoiceCreateModel} onClose={() => setInvoiceCreateModel(false)}>
-        <CreateInvoice/>
+      <Modal
+        open={invoiceCreateModel}
+        onClose={() => setInvoiceCreateModel(false)}
+      >
+        <CreateInvoice />
       </Modal>
     </>
   );

@@ -13,10 +13,21 @@ function HomeScreen() {
   });
   const [data, setData] = useState([]);
   const [status, setStatus] = useState([]);
+  const [allInvoices, setAllInvoices] = useAppStore(state => [state.allInvoices,state.setAllInvoices])
   const [rerender, setRerender] = useState(0)
 
   const rerenderfunc = () => {
     setRerender(inital => inital + 1)
+  }
+
+  const getInvoices = async () => {
+    try {
+      const res = await axiosInstance.get('/invoicesall/')
+      console.log(res)
+      setAllInvoices(res.data)
+    } catch(err) {
+      console.log(err.response)
+    }
   }
 
   const getStatus = async () => {
@@ -52,6 +63,7 @@ function HomeScreen() {
   useEffect(() => {
     getProjektData();
     getStatus();
+    getInvoices();
   }, [projectModalOpen,rerender]);
 
   const SegmentStyle = {

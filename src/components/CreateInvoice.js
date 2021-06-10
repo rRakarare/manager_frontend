@@ -53,6 +53,8 @@ function CreateInvoice() {
                 const { formattedValue, value } = values;
                 setNewdata((state) => ({ ...state, amount: value }));
               }}
+              isNumericString={true}
+              decimalScale={2}
               thousandSeparator={"."}
               decimalSeparator={","}
               prefix={"€ "}

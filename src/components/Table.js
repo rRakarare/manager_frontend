@@ -8,6 +8,7 @@ import { Modal, Button, Form, Dropdown } from "semantic-ui-react";
 function Table({ data, status, isLoading, rerenderfunc }) {
   const [open, setOpen] = useState(false);
   const [delproject, setDelproject] = useState({});
+  const [allInvoices, setAllInvoices] = useAppStore(state => [state.allInvoices,state.setAllInvoices])
   const history = useHistory();
   const setProjectModalOpen = useAppStore(state => state.setProjectModalOpen)
 
@@ -23,6 +24,7 @@ function Table({ data, status, isLoading, rerenderfunc }) {
     }
   }
 
+  
 
   const lookupstatus = {};
   status.forEach((item) => {
@@ -33,6 +35,14 @@ function Table({ data, status, isLoading, rerenderfunc }) {
       hour: "numeric",
       minute: "numeric",
     });
+
+    let honorar = 0
+
+    const projectinvoices = allInvoices && allInvoices.filter(inv=> inv.project === item.id)
+
+
+    projectinvoices && projectinvoices.forEach(item => honorar+= parseFloat(item.amount))
+
     return {
       id: item.id,
       title: item.title,
@@ -40,8 +50,11 @@ function Table({ data, status, isLoading, rerenderfunc }) {
       client: item.client && item.client.name,
       created_at: date,
       status: item.status && item.status.id,
+      honorar
     };
   });
+
+
   return (
     <>
       <MaterialTable
@@ -53,6 +66,8 @@ function Table({ data, status, isLoading, rerenderfunc }) {
           { title: "Kunde", field: "client" },
           { title: "Erstellt", field: "created_at", type: "datetime" },
           { title: "Status", field: "status", lookup: lookupstatus },
+          { title: "Honorar", field: "honorar", type: "currency",
+          currencySetting: { locale: "de", currencyCode: "EUR" }},
         ]}
         data={tableData}
         options={{

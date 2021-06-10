@@ -27,6 +27,12 @@ export const useAppStore = create(
     invoices: [],
     setInvoices: (invoices) => set((state) => ({ invoices })),
 
+    allIinvoices: [],
+    setAllInvoices: (allInvoices) => set((state) => ({ allInvoices })),
+
+    invoiceStati: [],
+    setInvoiceStati: (invoiceStati) => set((state) => ({ invoiceStati })),
+
     projectsteps: [],
     setProjectsteps: (projectsteps) => set((state) => ({ projectsteps })),
 

@@ -15,24 +15,26 @@ function EditInvoice({ invoiceID }) {
     state.setInvoiceEditModel,
   ]);
 
-  const [invoiceStati, setInvoiceStati] = useState([])
+  const [invoiceStati, setInvoiceStati] = useAppStore((state) => [
+    state.invoiceStati,
+    state.setInvoiceStati,
+  ]);
 
-  const getInvoiceStati = async () => {
+  const putInvoice = async () => {
     try {
-      const res = await axiosInstance.get('/invoicestatus/')
-      setInvoiceStati(res.data.map(item => ({
-        value:item.id,
-        text: item.name,
-        icon: item.icontext
-      })))
+      const res = await axiosInstance.put(`invoices/${invoice.id}`, {...newdata})
+      console.log(res.data)
     } catch(err) {
-      console.log(err)
+      console.log(err.response)
     }
+    setInvoiceEditModel(false)
   }
+  
 
   useEffect(() => {
-    getInvoiceStati()
-  }, []);
+    console.log(newdata);
+  }, [newdata]);
+
 
   useEffect(() => {
     console.log(invoiceStati);
@@ -61,15 +63,20 @@ function EditInvoice({ invoiceID }) {
               placeholder="Betrag in € (netto)"
               value={newdata.amount}
               onValueChange={(values) => {
+                console.log(values)
                 const { formattedValue, value } = values;
                 setNewdata((state) => ({ ...state, amount: value }));
               }}
+              isNumericString={true}
+              decimalScale={2}
               thousandSeparator={"."}
               decimalSeparator={","}
               prefix={"€ "}
               customInput={Input}
             />
           </Form.Field>
+
+
 
           <Form.Field
             selection
@@ -108,7 +115,7 @@ function EditInvoice({ invoiceID }) {
       </Modal.Content>
       <Modal.Actions>
         <Button negative onClick={()=>setInvoiceEditModel(false)}>Disagree</Button>
-        <Button positive>Agree</Button>
+        <Button positive onClick={()=>putInvoice()}>Agree</Button>
       </Modal.Actions>
     </>
   );
