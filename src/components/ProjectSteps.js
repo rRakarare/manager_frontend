@@ -29,6 +29,7 @@ function ProjectSteps({ projectID }) {
       const res = await axiosInstance.put(`projects/${projectID}/`, {
         status: id,
         title: projectdata.title,
+        project_number: projectdata.project_number,
       });
       setProjectdata(res.data);
     } catch (err) {

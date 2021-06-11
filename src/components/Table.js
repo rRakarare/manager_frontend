@@ -1,64 +1,62 @@
 import React, { useState, useEffect } from "react";
 import MaterialTable from "material-table";
 import { useHistory } from "react-router-dom";
-import axiosInstance from '../axios/axios'
+import axiosInstance from "../axios/axios";
 import { useAppStore } from "../app.state";
 import { Modal, Button, Form, Dropdown } from "semantic-ui-react";
 
 function Table({ data, status, isLoading, rerenderfunc }) {
   const [open, setOpen] = useState(false);
   const [delproject, setDelproject] = useState({});
-  const [allInvoices, setAllInvoices] = useAppStore(state => [state.allInvoices,state.setAllInvoices])
+  const [allInvoices, setAllInvoices] = useAppStore((state) => [
+    state.allInvoices,
+    state.setAllInvoices,
+  ]);
   const history = useHistory();
-  const setProjectModalOpen = useAppStore(state => state.setProjectModalOpen)
+  const setProjectModalOpen = useAppStore((state) => state.setProjectModalOpen);
 
-  
   const deleteProject = async () => {
     try {
-      await axiosInstance.delete(`/projects/${delproject.id}`)
-      rerenderfunc()
-      setOpen(false)
-      
-    } catch(err) {
-      console.log(err.response)
+      await axiosInstance.delete(`/projects/${delproject.id}`);
+      rerenderfunc();
+      setOpen(false);
+    } catch (err) {
+      console.log(err.response);
     }
-  }
-
+  };
   
-
-  const lookupstatus = {};
-  status.forEach((item) => {
-    lookupstatus[item.id] = item.name;
-  });
-  const tableData = data.map((item) => {
-    const date = new Date(item.created_at).toLocaleDateString("de", {
-      hour: "numeric",
-      minute: "numeric",
+  let lookupstatus = {};
+  let tableData = [];
+  if (!isLoading) {
+    
+    status.forEach((item) => {
+      lookupstatus[item.id] = item.name;
     });
+    tableData = data.map((item) => {
+      const date = new Date(item.created_at).toLocaleDateString("de", {
+        hour: "numeric",
+        minute: "numeric",
+      });
 
-    let honorar = 0
 
-    const projectinvoices = allInvoices && allInvoices.filter(inv=> inv.project === item.id)
-
-
-    projectinvoices && projectinvoices.forEach(item => honorar+= parseFloat(item.amount))
-
-    return {
-      id: item.id,
-      title: item.title,
-      project_number: item.project_number,
-      client: item.client && item.client.name,
-      created_at: date,
-      status: item.status && item.status.id,
-      honorar
-    };
-  });
-
+      return {
+        id: item.id,
+        title: item.title,
+        project_number: item.project_number,
+        client: item.client && item.client.name,
+        created_at: date,
+        status: item.status && item.status.id,
+        honorar: item.honorar,
+      };
+    });
+  } else {
+    
+  }
 
   return (
     <>
       <MaterialTable
-        isLoading={isLoading.dataLoaded || isLoading.statusLoaded}
+        isLoading={isLoading}
         title="Projektliste"
         columns={[
           { title: "Nr.", field: "project_number" },
@@ -66,8 +64,12 @@ function Table({ data, status, isLoading, rerenderfunc }) {
           { title: "Kunde", field: "client" },
           { title: "Erstellt", field: "created_at", type: "datetime" },
           { title: "Status", field: "status", lookup: lookupstatus },
-          { title: "Honorar", field: "honorar", type: "currency",
-          currencySetting: { locale: "de", currencyCode: "EUR" }},
+          {
+            title: "Honorar",
+            field: "honorar",
+            type: "currency",
+            currencySetting: { locale: "de", currencyCode: "EUR" },
+          },
         ]}
         data={tableData}
         options={{
@@ -103,7 +105,6 @@ function Table({ data, status, isLoading, rerenderfunc }) {
           },
         ]}
       />
-
 
       <Modal open={open} onClose={() => setOpen(false)}>
         <Modal.Header>Projekt löschen</Modal.Header>
