@@ -126,6 +126,11 @@ function ProjectDetail({ projectID }) {
               {projectdata.contact}{" "}
               {projectdata.contact && <Icon color="green" name="check" />}
             </List.Description>
+            <List.Description>
+              <strong>Abteilung: </strong>
+              {projectdata.part}{" "}
+              {projectdata.part && <Icon color="green" name="check" />}
+            </List.Description>
           </List.Content>
         </List.Item>
         <List.Item>

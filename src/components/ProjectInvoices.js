@@ -14,14 +14,12 @@ import { useAppStore } from "../app.state";
 import WordTemplateReplace from "../components/WordTemplateReplace";
 import CreateInvoice from "../components/CreateInvoice";
 import EditInvoice from "../components/EditInvoice";
-
-
+import re_vorlage from '../vorlagen/re_vorlage.docx'
 
 function ProjectInvoices({ projectID }) {
-
-  var formatter = new Intl.NumberFormat('de', {
-    style: 'currency',
-    currency: 'EUR',
+  var formatter = new Intl.NumberFormat("de", {
+    style: "currency",
+    currency: "EUR",
   });
 
   const [invoices, setInvoices] = useAppStore((state) => [
@@ -42,19 +40,18 @@ function ProjectInvoices({ projectID }) {
     state.setInvoiceStati,
   ]);
 
-  const [artikels, setArtikels] = useState([])
+  const [artikels, setArtikels] = useState([]);
 
   const projectdata = useAppStore((state) => state.projectdata);
 
   const getArtikels = async () => {
     try {
-      const res = await axiosInstance.get('/artikel/')
-      setArtikels(res.data)
-
-    } catch(err) {
-      console.log(err)
+      const res = await axiosInstance.get("/artikel/");
+      setArtikels(res.data);
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
   const getInvoiceStati = async () => {
     try {
@@ -163,10 +160,12 @@ function ProjectInvoices({ projectID }) {
                 );
                 return (
                   <>
-                    <span style={{ marginRight: ".2rem" }}>{status && status.text}</span>
+                    <span style={{ marginRight: ".2rem" }}>
+                      {status && status.text}
+                    </span>
                     <Icon
-                      color={status &&
-                        status.value === 3
+                      color={
+                        status && status.value === 3
                           ? "green"
                           : status && status.value === 2
                           ? "yellow"
@@ -237,10 +236,36 @@ function ProjectInvoices({ projectID }) {
           components={{
             Action: (props) => {
               const invoice = props.data;
-              const artikel = artikels.find(item => projectdata.client && item.id === projectdata.client.artikel)
+              const artikel = artikels.find(
+                (item) =>
+                  projectdata.client && item.id === projectdata.client.artikel
+              );
+
+              let adresse = [];
+
+              if (projectdata.part) {
+                adresse.push({ item: projectdata.part });
+              }
+              if (projectdata.contact) {
+                adresse.push({ item: projectdata.contact });
+              }
+              if (projectdata.street) {
+                adresse.push({ item: projectdata.street });
+              }
+              if (projectdata.plz && projectdata.place) {
+                adresse.push({
+                  item: projectdata.plz + " " + projectdata.place,
+                });
+              }
+
               const newData = {
                 date: new Date().toLocaleDateString("de"),
-                logo: { isImage: true, url: projectdata.client && projectdata.client.image, width: 20, height: 20 },
+                logo: {
+                  isImage: true,
+                  url: projectdata.client && projectdata.client.image,
+                  width: 20,
+                  height: 20,
+                },
                 invoice_number: invoice.invoice_number,
                 netto: formatter.format(invoice.amount),
                 tax: formatter.format(invoice.amount * 0.19),
@@ -253,11 +278,20 @@ function ProjectInvoices({ projectID }) {
                 plz: projectdata.plz,
                 place: projectdata.place,
                 contact: projectdata.contact,
+                adresse: adresse,
+                part: projectdata.part,
+                contactSalut: projectdata.contact
+                  ? projectdata.contact.substring(0, 4) === "Herr"
+                    ? `sehr geehrter ${projectdata.contact}`
+                    : projectdata.contact.substring(0, 4) === "Frau"
+                    ? `sehr geehrte ${projectdata.contact}`
+                    : ""
+                  : "Sehr geehrte Damen und Herren",
               };
               return props.action.icon === "word" ? (
                 <WordTemplateReplace
-                  filepath="/re_vorlage.docx"
-                  filename="asdqwe.docx"
+                  filepath={re_vorlage}
+                  filename={`${invoice.invoice_number}.docx`}
                   data={newData}
                   render={(generateDocument) => {
                     return (

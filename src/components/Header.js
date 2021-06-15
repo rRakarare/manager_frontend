@@ -2,6 +2,7 @@ import React from "react";
 import { Menu, Sidebar, Dropdown, Icon } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
 import { useAppStore } from "../app.state";
+import ubcsvg from '../images/ubc.svg'
 
 function Nav({ children }) {
   const [visible, setVisible] = React.useState(false);
@@ -43,20 +44,18 @@ function Nav({ children }) {
 
           <Link to="/">
             <Menu.Item>
-              <img src="/ubc.svg" alt="logo" />
+              <img style={{width:"70px"}} src={ubcsvg} alt="logo" />
             </Menu.Item>
           </Link>
 
-          <Menu.Item name="features">
-            <h3>UBC Data</h3>
-          </Menu.Item>
+
           {auth ? UserMenu : null}
         </Menu>
       </div>
       <Sidebar.Pushable style={{}}>
         <Sidebar
           as={Menu}
-          animation="overlay"
+          animation="push"
           icon="labeled"
           vertical
           visible={visible}
@@ -82,7 +81,7 @@ function Nav({ children }) {
         </Sidebar>
 
         <Sidebar.Pusher
-          style={{ overflow: "scroll", height: "100vh", paddingTop: 53.63 }}
+          style={{ overflow: "scroll", height: "100vh", paddingTop: 53.63, transition: '400ms', paddingRight: visible ? 148 : 0 }}
         >
           {children}
         </Sidebar.Pusher>
