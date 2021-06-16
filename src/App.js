@@ -5,7 +5,7 @@ import ProtectRoute from "./components/ProtectRoute";
 import HomeScreen from "./screens/HomeScreen";
 import ClientScreen from "./screens/ClientScreen";
 import ProjectDetailScreen from "./screens/ProjectDetailScreen";
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { Route, HashRouter as Router, Switch } from "react-router-dom";
 
 function App() {
   return (
