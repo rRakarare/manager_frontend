@@ -105,32 +105,24 @@ function HomeScreen() {
           </Grid.Column>
           <Grid.Column width={4}>
             <Segment loading={activeProjects == undefined} style={SegmentStyle}>
-            <Statistic.Group size="small">
+
+
               <Statistic size="small">
                 <Statistic.Value>{activeProjects}</Statistic.Value>
                 <Statistic.Label>Aktive Projekte</Statistic.Label>
               </Statistic>
-              <Statistic size="small">
-                <Statistic.Value>{activeProjects}</Statistic.Value>
-                <Statistic.Label>Aktive Projekte</Statistic.Label>
-              </Statistic>
-              </Statistic.Group>
+
             </Segment>
             <Segment loading={activeSum == undefined} style={SegmentStyle}>
-            <Statistic.Group size="small">
+
               <Statistic size="small">
                 <Statistic.Value>
                   {activeSum && activeSum.toLocaleString("de") + " €"}
                 </Statistic.Value>
                 <Statistic.Label>Auftragssumme</Statistic.Label>
               </Statistic>
-              <Statistic size="small">
-                <Statistic.Value>
-                  {activeSum && activeSum.toLocaleString("de") + " €"}
-                </Statistic.Value>
-                <Statistic.Label>Auftragssumme</Statistic.Label>
-              </Statistic>
-              </Statistic.Group>
+
+
             </Segment>
             <Segment loading={futureProjects == undefined} style={SegmentStyle}>
               <Statistic size="small">

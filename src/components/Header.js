@@ -2,7 +2,7 @@ import React from "react";
 import { Menu, Sidebar, Dropdown, Icon } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
 import { useAppStore } from "../app.state";
-import ubcsvg from '../images/ubc.svg'
+import ubcsvg from "../images/ubc.svg";
 
 function Nav({ children }) {
   const [visible, setVisible] = React.useState(false);
@@ -44,10 +44,9 @@ function Nav({ children }) {
 
           <Link to="/">
             <Menu.Item>
-              <img style={{width:"70px"}} src={ubcsvg} alt="logo" />
+              <img style={{ width: "80px" }} src={ubcsvg} alt="logo" />
             </Menu.Item>
           </Link>
-
 
           {auth ? UserMenu : null}
         </Menu>
@@ -62,26 +61,26 @@ function Nav({ children }) {
           width="thin"
           style={{ backgroundColor: "white", paddingTop: 53.63 }}
         >
-          
-            <Menu.Item as={Link} to="/">
-              <Icon name="home" />
-              Home
-            </Menu.Item>
-          
-          
-            <Menu.Item as={Link} to="/clients">
-              <Icon name="gamepad" />
-              Kunden
-            </Menu.Item>
-          
           <Menu.Item as={Link} to="/">
-            <Icon name="camera" />
-            Channels
+            <Icon name="clipboard" />
+            Projekte
           </Menu.Item>
+
+          <Menu.Item as={Link} to="/clients">
+            <Icon name="address book" />
+            Kunden
+          </Menu.Item>
+
         </Sidebar>
 
         <Sidebar.Pusher
-          style={{ overflow: "scroll", height: "100vh", paddingTop: 53.63, transition: '400ms', paddingRight: visible ? 148 : 0 }}
+          style={{
+            overflow: "scroll",
+            height: "100vh",
+            paddingTop: 53.63,
+            transition: "400ms",
+            paddingRight: visible ? 148 : 0,
+          }}
         >
           {children}
         </Sidebar.Pusher>
