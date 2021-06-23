@@ -13,6 +13,7 @@ import axiosInstance from "../axios/axios";
 import { useAppStore } from "../app.state";
 import WordTemplateReplace from "../components/WordTemplateReplace";
 import ProjectEdit from "../components/ProjectEdit";
+import CreateOffer from "../components/CreateOffer";
 
 var _ = require("lodash/core");
 
@@ -42,11 +43,16 @@ function ProjectDetail({ projectID }) {
     state.setEditModalOpen,
   ]);
 
+  const [createOfferModel, setCreateOfferModel] = useAppStore((state) => [
+    state.createOfferModel,
+    state.setCreateOfferModel,
+  ]);
+
   const invoices = useAppStore((state) => state.invoices);
 
   let honorar = 0;
 
-  invoices.forEach(item => honorar += parseFloat(item.amount))
+  invoices.forEach((item) => (honorar += parseFloat(item.amount)));
 
   const getProjectData = async () => {
     try {
@@ -76,8 +82,11 @@ function ProjectDetail({ projectID }) {
         <List.Item>
           <List.Content>
             <List.Header as="h2">{projectdata.title}</List.Header>
-            <List.Description as="p">
+            <List.Description as="p" style={{ marginBottom: 0 }}>
               <strong>Erstellt:</strong> {date}
+            </List.Description>
+            <List.Description as="p">
+              <strong>Projektnr:</strong> {projectdata.project_number}
             </List.Description>
           </List.Content>
         </List.Item>
@@ -98,7 +107,9 @@ function ProjectDetail({ projectID }) {
               Honorar
             </List.Header>
             <List.Description style={{ marginLeft: "11px" }}>
-              <strong style={{ color: "green" }}>{honorar.toLocaleString('de') + " €"}</strong>
+              <strong style={{ color: "green" }}>
+                {honorar.toLocaleString("de") + " €"}
+              </strong>
             </List.Description>
           </List.Content>
         </List.Item>
@@ -141,21 +152,10 @@ function ProjectDetail({ projectID }) {
               content="edit"
               onClick={() => setEditModalOpen(true)}
             />
-            <WordTemplateReplace
-              filepath="/test.docx"
-              filename="asdqwe.docx"
-              data={dataold}
-              render={(generateDocument) => {
-                return (
-                  <Button
-                    icon="file word"
-                    content="offer"
-                    color="blue"
-                    style={{ marginBottom: ".3rem" }}
-                    onClick={() => generateDocument()}
-                  />
-                );
-              }}
+            <Button
+              icon="file word"
+              content="create"
+              onClick={() => setCreateOfferModel(true)}
             />
           </List.Content>
         </List.Item>
@@ -163,6 +163,10 @@ function ProjectDetail({ projectID }) {
 
       <Modal open={editModalOpen}>
         <ProjectEdit />
+      </Modal>
+
+      <Modal open={createOfferModel}>
+        <CreateOffer />
       </Modal>
     </>
   );

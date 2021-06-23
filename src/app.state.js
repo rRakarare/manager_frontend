@@ -40,25 +40,31 @@ export const useAppStore = create(
     setProjectdata: (projectdata) => set((state) => ({ projectdata })),
 
     cropImage: null,
-    setCropImage: (cropImage) => set((state) => ({cropImage})),
+    setCropImage: (cropImage) => set((state) => ({ cropImage })),
 
     cropModalOpen: false,
-    setCropModalOpen: (cropModalOpen) => set((state) => ({cropModalOpen})),
+    setCropModalOpen: (cropModalOpen) => set((state) => ({ cropModalOpen })),
 
     openClient: false,
-    setOpenClient: (openClient) => set((state) => ({openClient})),
+    setOpenClient: (openClient) => set((state) => ({ openClient })),
 
     projectModalOpen: false,
-    setProjectModalOpen: (projectModalOpen) => set((state) => ({projectModalOpen})),
+    setProjectModalOpen: (projectModalOpen) =>
+      set((state) => ({ projectModalOpen })),
 
     editModalOpen: false,
-    setEditModalOpen: (editModalOpen) => set((state) => ({editModalOpen})),
+    setEditModalOpen: (editModalOpen) => set((state) => ({ editModalOpen })),
 
     invoiceCreateModel: false,
-    setInvoiceCreateModel: (invoiceCreateModel) => set((state) => ({invoiceCreateModel})),
+    setInvoiceCreateModel: (invoiceCreateModel) =>
+      set((state) => ({ invoiceCreateModel })),
 
     invoiceEditModel: false,
-    setInvoiceEditModel: (invoiceEditModel) => set((state) => ({invoiceEditModel})),
+    setInvoiceEditModel: (invoiceEditModel) =>
+      set((state) => ({ invoiceEditModel })),
 
+    createOfferModel: false,
+    setCreateOfferModel: (createOfferModel) =>
+      set((state) => ({ createOfferModel })),
   }))
 );
