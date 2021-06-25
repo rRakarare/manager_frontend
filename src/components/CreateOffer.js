@@ -13,11 +13,19 @@ function CreateOffer() {
   ]);
 
   const [crew, setCrew] = useState([]);
+  const [artikel, setArtikel] = useState([]);
   const [skill, setSkill] = useState([]);
   const [selectedCrew, setSelectedCrew] = useState([]);
 
+  const today = new Date()
+  const asd = today.setDate(today.getDate()+30)
+  const dateTo = new Date(asd)
+
   const [data, setData] = useState({
     title: projectdata.title,
+    place: projectdata.place,
+    date: today.toLocaleDateString('de-DE'),
+    dateTo: dateTo.toLocaleDateString('de-DE'),
     client_name: projectdata.client.name,
     client_image: {
       isImage: true,
@@ -28,6 +36,15 @@ function CreateOffer() {
     project_number: projectdata.project_number,
     project_numbers: projectdata.project_number,
   });
+
+  const queryArtikels = async () => {
+    try {
+      const res = await axiosInstance.get("artikel/")
+      setData(state => ({...state, ...res.data.find(item => item.id === projectdata.client.artikel)}))
+    } catch(err) {
+      console.log(err.response)
+    }
+  }
 
   const querySkills = async () => {
     try {
@@ -61,10 +78,11 @@ function CreateOffer() {
   useEffect(() => {
     queryCrew();
     querySkills();
+    queryArtikels()
   }, []);
 
   useEffect(() => {
-    console.log(projectdata);
+    console.log(data);
   }, [data]);
 
   useEffect(() => {
