@@ -98,6 +98,23 @@ function EditInvoice({ invoiceID }) {
           />
 
           <Form.Field
+            label="Rechnungsstellung"
+            control={Input}
+            disabled={newdata.status == 1 ? true : false}
+            value={newdata.date_of_invoicing}
+            error={error.name && { content: error.name, pointing: "below" }}
+            onChange={(e) =>
+              setNewdata((state) => ({
+                ...state,
+                date_of_invoicing: e.target.value,
+              }))
+            }
+            placeholder="Title"
+            type="date"
+          />
+
+
+          <Form.Field
             label="Vorraussichtlicher Zahlungseingang"
             control={Input}
             value={newdata.date_of_payment}
