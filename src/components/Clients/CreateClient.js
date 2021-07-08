@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Input, Image, Form, Dropdown } from "semantic-ui-react";
 import axios from "axios";
 import convert from "image-file-resize";
-import axiosInstance from "../axios/axios";
-import { useAppStore } from "../app.state";
+import axiosInstance from "../../axios/axios";
+import { useAppStore } from "../../app.state";
 
 import CreateCrop from "./CreateCrop";
 
@@ -74,7 +74,7 @@ function CreateClient() {
           src={
             cropImage
               ? cropImage
-              : "/smile.png"
+              : "/sample.svg"
           }
           onClick={() => setCropModalOpen(true)}
           style={{ cursor: "pointer", padding: "1rem" }}

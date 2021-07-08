@@ -9,12 +9,12 @@ import {
   Container,
 } from "semantic-ui-react";
 import MaterialTable from "material-table";
-import axiosInstance from "../axios/axios";
-import { useAppStore } from "../app.state";
-import WordTemplateReplace from "../components/WordTemplateReplace";
-import CreateInvoice from "../components/CreateInvoice";
-import EditInvoice from "../components/EditInvoice";
-import re_vorlage from '../vorlagen/re_vorlage.docx'
+import axiosInstance from "../../axios/axios";
+import { useAppStore } from "../../app.state";
+import WordTemplateReplace from "../WordTemplateReplace";
+import CreateInvoice from "./CreateInvoice";
+import EditInvoice from "./EditInvoice";
+import re_vorlage from '../../vorlagen/re_vorlage.docx'
 
 function ProjectInvoices({ projectID }) {
   var formatter = new Intl.NumberFormat("de", {

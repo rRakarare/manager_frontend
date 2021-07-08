@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Segment, Statistic, Modal } from "semantic-ui-react";
-import Table from "../components/Table";
+import Table from "../components/Projects/Table";
 import axiosInstance from "../axios/axios";
-import CreateProject from "../components/CreateProject";
+import CreateProject from "../components/Projects/CreateProject";
 import { useAppStore } from "../app.state";
 var _ = require("lodash");
 

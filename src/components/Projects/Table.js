@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import MaterialTable from "material-table";
 import { useHistory } from "react-router-dom";
-import axiosInstance from "../axios/axios";
-import { useAppStore } from "../app.state";
+import axiosInstance from "../../axios/axios";
+import { useAppStore } from "../../app.state";
 import { Modal, Button, Form, Dropdown } from "semantic-ui-react";
 
 function Table({ data, status, isLoading, rerenderfunc }) {

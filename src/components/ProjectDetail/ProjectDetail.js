@@ -9,11 +9,11 @@ import {
   List,
   Icon,
 } from "semantic-ui-react";
-import axiosInstance from "../axios/axios";
-import { useAppStore } from "../app.state";
-import WordTemplateReplace from "../components/WordTemplateReplace";
-import ProjectEdit from "../components/ProjectEdit";
-import CreateOffer from "../components/CreateOffer";
+import axiosInstance from "../../axios/axios";
+import { useAppStore } from "../../app.state";
+import WordTemplateReplace from "../WordTemplateReplace";
+import ProjectEdit from "./ProjectEdit";
+import CreateOffer from "./CreateOffer";
 
 var _ = require("lodash/core");
 

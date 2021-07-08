@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Dropdown, Input } from "semantic-ui-react";
-import axiosInstance from "../axios/axios";
-import { useAppStore } from "../app.state";
+import axiosInstance from "../../axios/axios";
+import { useAppStore } from "../../app.state";
 import axios from "axios";
 
 function CreateProject() {

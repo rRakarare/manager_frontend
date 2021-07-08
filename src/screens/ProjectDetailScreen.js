@@ -1,8 +1,8 @@
 import React from "react";
 import { Grid, Segment, Step } from "semantic-ui-react";
-import ProjectInvoices from "../components/ProjectInvoices";
-import ProjectSteps from "../components/ProjectSteps";
-import ProjectDetail from "../components/ProjectDetail";
+import ProjectInvoices from "../components/ProjectDetail/ProjectInvoices";
+import ProjectSteps from "../components/ProjectDetail/ProjectSteps";
+import ProjectDetail from "../components/ProjectDetail/ProjectDetail";
 
 function ProjectDetailScreen({ match }) {
   const projectID = match.params.id;

@@ -3,9 +3,9 @@ import axios from "axios";
 import { Gluejar } from "@charliewilco/gluejar";
 import { Slider } from "react-semantic-ui-range";
 import { Segment, Button } from "semantic-ui-react";
-import getCroppedImg from "./cropimage";
-import { useAppStore } from "../app.state";
-import axiosInstance from "../axios/axios";
+import getCroppedImg from "../cropimage";
+import { useAppStore } from "../../app.state";
+import axiosInstance from "../../axios/axios";
 import Cropper from "react-easy-crop";
 
 function CreateCrop() {

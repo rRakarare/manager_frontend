@@ -1,7 +1,7 @@
 import React from "react";
 import MaterialTable from "material-table";
 import { Image } from "semantic-ui-react";
-import { useAppStore } from "../app.state";
+import { useAppStore } from "../../app.state";
 
 function ClientTable({ data }) {
 

@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import { Step, Icon } from "semantic-ui-react";
-import axiosInstance from "../axios/axios";
-import { useAppStore } from "../app.state";
+import axiosInstance from "../../axios/axios";
+import { useAppStore } from "../../app.state";
 
 var _ = require("lodash/core");
 

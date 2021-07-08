@@ -6,8 +6,8 @@ import {
 import axios from 'axios';
 import axiosInstance from "../axios/axios";
 import { useAppStore } from '../app.state'
-import CreateClient from '../components/CreateClient'
-import ClientTable from '../components/ClientTable'
+import CreateClient from '../components/Clients/CreateClient'
+import ClientTable from '../components/Clients/ClientTable'
 
 function ClientScreen() {
 

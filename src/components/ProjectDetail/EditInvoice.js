@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Input, Dropdown } from "semantic-ui-react";
-import axiosInstance from "../axios/axios";
-import { useAppStore } from "../app.state";
+import axiosInstance from "../../axios/axios";
+import { useAppStore } from "../../app.state";
 import NumberFormat from "react-number-format";
 
 function EditInvoice({ invoiceID }) {

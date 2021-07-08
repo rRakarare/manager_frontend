@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Dropdown, Input, Button } from "semantic-ui-react";
-import { useAppStore } from "../app.state";
-import WordTemplateReplace from "./WordTemplateReplace";
-import axiosInstance from "../axios/axios";
-import an_vorlage from "../vorlagen/an_vorlage.docx";
+import { useAppStore } from "../../app.state";
+import WordTemplateReplace from "../WordTemplateReplace";
+import axiosInstance from "../../axios/axios";
+import an_vorlage from "../../vorlagen/an_vorlage.docx";
 
 function CreateOffer() {
   const projectdata = useAppStore((state) => state.projectdata);
