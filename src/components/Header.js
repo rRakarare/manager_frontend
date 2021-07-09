@@ -72,7 +72,7 @@ function Nav({ children }) {
           </Menu.Item>
 
           <Menu.Item as={Link} to="/invoices">
-            <Icon name="address book" />
+            <Icon name="eur" />
             Rechungen
           </Menu.Item>
         </Sidebar>
