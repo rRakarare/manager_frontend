@@ -14,7 +14,7 @@ import { useAppStore } from "../../app.state";
 import WordTemplateReplace from "../WordTemplateReplace";
 import CreateInvoice from "./CreateInvoice";
 import EditInvoice from "./EditInvoice";
-import re_vorlage from '../../vorlagen/re_vorlage.docx'
+import re_vorlage from "../../vorlagen/re_vorlage.docx";
 
 function ProjectInvoices({ projectID }) {
   var formatter = new Intl.NumberFormat("de", {
@@ -71,11 +71,6 @@ function ProjectInvoices({ projectID }) {
   const [isLoading, setIsLoading] = useState(true);
   const [openDel, setOpenDel] = useState(false);
   const [clickedInvoice, setClickedInvoice] = useState({});
-
-  const dataold = {
-    asdqwe: { isImage: true, url: "/logo512.png", width: 200, height: 200 },
-    qwe2: "Hello World",
-  };
 
   const getInvoice = async () => {
     try {

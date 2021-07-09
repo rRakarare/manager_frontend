@@ -6,6 +6,7 @@ import HomeScreen from "./screens/HomeScreen";
 import ClientScreen from "./screens/ClientScreen";
 import ProjectDetailScreen from "./screens/ProjectDetailScreen";
 import { Route, HashRouter as Router, Switch } from "react-router-dom";
+import InvoiceScreen from "./screens/InvoiceScreen";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Switch>
             <ProtectRoute exact path="/" component={HomeScreen} />
             <ProtectRoute exact path="/clients" component={ClientScreen} />
+            <ProtectRoute exact path="/invoices" component={InvoiceScreen} />
             <ProtectRoute
               exact
               path="/projects/:id"

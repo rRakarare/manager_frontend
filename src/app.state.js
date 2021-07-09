@@ -39,6 +39,9 @@ export const useAppStore = create(
     projectdata: {},
     setProjectdata: (projectdata) => set((state) => ({ projectdata })),
 
+    editClientData: {},
+    setEditClientData: (editClientData) => set((state) => ({ editClientData })),
+
     cropImage: null,
     setCropImage: (cropImage) => set((state) => ({ cropImage })),
 

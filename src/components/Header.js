@@ -71,6 +71,10 @@ function Nav({ children }) {
             Kunden
           </Menu.Item>
 
+          <Menu.Item as={Link} to="/invoices">
+            <Icon name="address book" />
+            Rechungen
+          </Menu.Item>
         </Sidebar>
 
         <Sidebar.Pusher

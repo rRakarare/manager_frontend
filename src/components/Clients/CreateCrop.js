@@ -12,15 +12,13 @@ function CreateCrop() {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [filea, setFilea] = useState();
 
   const [cropImage, setCropImage] = useAppStore((state) => [
     state.cropImage,
     state.setCropImage,
   ]);
 
-  const setCropModalOpen = useAppStore(state => state.setCropModalOpen);
-
+  const setCropModalOpen = useAppStore((state) => state.setCropModalOpen);
 
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -31,7 +29,7 @@ function CreateCrop() {
     try {
       const cropImage = await getCroppedImg(img, croppedAreaPixels);
       setCropImage(cropImage);
-      setCropModalOpen(false)
+      setCropModalOpen(false);
     } catch (e) {
       console.error(e);
     }
@@ -46,7 +44,6 @@ function CreateCrop() {
       setZoom(value);
     },
   };
-
 
   return (
     <>
@@ -95,7 +92,17 @@ function CreateCrop() {
                     </Button>
                   </>
                 ) : (
-                  <div style={{height:"200px", width:"200px", display:'flex', alignItems:'center', justifyContent:'center'}}><h4>Paste Image</h4></div>
+                  <div
+                    style={{
+                      height: "200px",
+                      width: "200px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <h4>Paste Image</h4>
+                  </div>
                 )}
               </Segment>
             </>
