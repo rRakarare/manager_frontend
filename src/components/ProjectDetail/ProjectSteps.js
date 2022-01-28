@@ -42,11 +42,13 @@ function ProjectSteps({ projectID }) {
     !_.isEmpty(projectdata) ? (
       <Step
         key={item.id}
-        completed={projectdata.status >= item.order}
-        active={projectdata.status + 1 === item.order}
-        onClick={() => setNewStatus(item.order)}
+        completed={projectdata.status === 6 ? false : projectdata.status >= item.order ? true : false}
+        active={projectdata.status < 5 ? projectdata.status + 1 === item.order : projectdata.status >= 5 && item.order >= 5 && projectdata.status === item.order ? true : false}
+        onClick={() => {
+          setNewStatus(item.order)
+        }}
       >
-        <Icon name={item.icontext} />
+        <Icon name={item.icontext} color={projectdata.status === 6 && item.order === 6 ? "red" : "black"} />
         <Step.Content>
           <Step.Title>{item.name}</Step.Title>
           <Step.Description>{item.subtext}</Step.Description>

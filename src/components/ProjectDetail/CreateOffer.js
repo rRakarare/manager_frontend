@@ -1,31 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Dropdown, Input, Button } from "semantic-ui-react";
+import NumberFormat from "react-number-format";
 import { useAppStore } from "../../app.state";
 import WordTemplateReplace from "../WordTemplateReplace";
 import axiosInstance from "../../axios/axios";
-import an_vorlage from "../../vorlagen/an_vorlage.docx";
 
 function CreateOffer() {
   const projectdata = useAppStore((state) => state.projectdata);
-  const [createOfferModel, setCreateOfferModel] = useAppStore((state) => [
-    state.createOfferModel,
-    state.setCreateOfferModel,
-  ]);
+  const honorar = useAppStore((state) => state.projectHonorar);
+  const setCreateOfferModel = useAppStore((state) => state.setCreateOfferModel);
 
   const [crew, setCrew] = useState([]);
-  const [artikel, setArtikel] = useState([]);
   const [skill, setSkill] = useState([]);
   const [selectedCrew, setSelectedCrew] = useState([]);
+  const [art, setArt] = useState();
+  const [modal, setModal] = useState();
+  const [code, setCode] = useState();
+  const [templates, setTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState({});
 
-  const today = new Date()
-  const asd = today.setDate(today.getDate()+30)
-  const dateTo = new Date(asd)
+  const today = new Date();
+  const asd = new Date().setDate(today.getDate() + 30);
+  const dateTo = new Date(asd);
+
+  const suply = 350;
 
   const [data, setData] = useState({
     title: projectdata.title,
     place: projectdata.place,
-    date: today.toLocaleDateString('de-DE'),
-    dateTo: dateTo.toLocaleDateString('de-DE'),
+    date: today.toLocaleDateString("de-DE"),
+    dateTo: dateTo.toLocaleDateString("de-DE"),
     client_name: projectdata.client.name,
     client_image: {
       isImage: true,
@@ -35,16 +39,45 @@ function CreateOffer() {
     },
     project_number: projectdata.project_number,
     project_numbers: projectdata.project_number,
+    honorar,
+    honorarstring: honorar.toLocaleString("de-DE", {
+      style: "currency",
+      currency: "EUR",
+    }),
+    suply: suply,
+    suplystring: suply.toLocaleString("de-DE", {
+      style: "currency",
+      currency: "EUR",
+    }),
   });
+
+  const queryTemplates = async () => {
+    try {
+      const res = await axiosInstance.get("templates/");
+      setTemplates(
+        res.data.map((item) => ({
+          value: item.id,
+          text: item.name,
+          code: item.code,
+          template: item.template,
+        }))
+      );
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
 
   const queryArtikels = async () => {
     try {
-      const res = await axiosInstance.get("artikel/")
-      setData(state => ({...state, ...res.data.find(item => item.id === projectdata.client.artikel)}))
-    } catch(err) {
-      console.log(err.response)
+      const res = await axiosInstance.get("artikel/");
+      setData((state) => ({
+        ...state,
+        ...res.data.find((item) => item.id === projectdata.client.artikel),
+      }));
+    } catch (err) {
+      console.log(err.response);
     }
-  }
+  };
 
   const querySkills = async () => {
     try {
@@ -78,16 +111,12 @@ function CreateOffer() {
   useEffect(() => {
     queryCrew();
     querySkills();
-    queryArtikels()
+    queryArtikels();
+    queryTemplates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
-  useEffect(() => {
-    console.log(skill);
-  }, [skill]);
 
   useEffect(() => {
     const newData = crew.filter((item) => selectedCrew.includes(item.value));
@@ -101,21 +130,8 @@ function CreateOffer() {
       };
     });
     setData((state) => ({ ...state, crew: rdyData }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCrew]);
-
-  const dataold = {
-    crew: [
-      {
-        name: "rene",
-        laap: [{ short: "asd" }, { short: "qwe" }],
-      },
-      {
-        name: "couti",
-        laap: [{ short: "123" }, { short: "456" }],
-      },
-    ],
-    qwe2: "Hello World",
-  };
 
   return (
     <>
@@ -124,8 +140,77 @@ function CreateOffer() {
       </Modal.Header>
       <Modal.Content>
         <Form>
-          {/* <Form.Field label="Title" control={Input} placeholder="Title" /> */}
+          <Form.Field
+            selection
+            control={Dropdown}
+            label="Projektart"
+            fluid
+            placeholder="Art auswählen"
+            options={templates}
+            value={art}
+            onChange={(e, { value, code }) => {
+              setCode(e.target.getAttribute("code"));
+              setArt(value);
+              setSelectedTemplate(
+                templates.find((item) => item.value === value)
+              );
+            }}
+          />
 
+          <Form.Field>
+            <label>Honorar</label>
+            <NumberFormat
+              placeholder="Betrag in € (netto)"
+              value={data.honorar}
+              onValueChange={(values) => {
+                console.log(values);
+                const { value, floatValue } = values;
+                setData((state) => ({
+                  ...state,
+                  honorar: value,
+                  honorarstring:
+                    floatValue &&
+                    floatValue.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    }),
+                }));
+              }}
+              isNumericString={true}
+              decimalScale={2}
+              thousandSeparator={"."}
+              decimalSeparator={","}
+              prefix={"€ "}
+              customInput={Input}
+            />
+          </Form.Field>
+
+          <Form.Field>
+            <label>Reisekosten</label>
+            <NumberFormat
+              placeholder="Betrag in € (netto)"
+              value={data.suply}
+              onValueChange={(values) => {
+                const { value, floatValue } = values;
+                setData((state) => ({
+                  ...state,
+                  suply: value,
+                  suplystring:
+                    floatValue &&
+                    floatValue.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    }),
+                }));
+              }}
+              isNumericString={true}
+              decimalScale={2}
+              thousandSeparator={"."}
+              decimalSeparator={","}
+              prefix={"€ "}
+              customInput={Input}
+            />
+          </Form.Field>
           <Form.Field
             multiple
             selection
@@ -137,6 +222,35 @@ function CreateOffer() {
             value={selectedCrew}
             onChange={(e, { value }) => setSelectedCrew(value)}
           />
+          <Form.Field
+            selection
+            control={Dropdown}
+            label="Zahlung"
+            fluid
+            placeholder="Zahlungsmodalität auswählen"
+            options={[
+              {
+                value: 0,
+                text: "Rein netto, 14 Tage nach Rechnungseingang.",
+              },
+              {
+                value: 1,
+                text: "50% des Honorars werden nach Erstellung der Vergabeunterlagen, die verbleibenden 50% bei Projektabschluss (Zuschlagserteilung) berechnet. Rein netto, 14 Tage nach Rechnungseingang.",
+              },
+              {
+                value: 2,
+                text: "50% des Honorars werden nach Fertigstellung der IST-Analyse, die verbleibenden 50% bei Projektabschluss berechnet. Rein netto, 14 Tage nach Rechnungseingang.",
+              },
+            ]}
+            value={modal}
+            onChange={(e, { value }) => {
+              setModal(value);
+              setData((state) => ({
+                ...state,
+                modalstring: e.target.innerText,
+              }));
+            }}
+          />
         </Form>
       </Modal.Content>
       <Modal.Actions>
@@ -144,12 +258,17 @@ function CreateOffer() {
           Abbrechen
         </Button>
         <WordTemplateReplace
-          filepath={an_vorlage}
-          filename="asdqwe.docx"
+          filepath={selectedTemplate.template}
+          filename={`Angebot-${code}-${projectdata.project_number}.docx`}
           data={data}
           render={(generateDocument) => {
             return (
               <Button
+                disabled={
+                  code != null && selectedCrew.length > 0 && modal != null
+                    ? false
+                    : true
+                }
                 icon="file word"
                 content="offer"
                 color="blue"

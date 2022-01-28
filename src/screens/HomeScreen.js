@@ -7,22 +7,12 @@ import { useAppStore } from "../app.state";
 var _ = require("lodash");
 
 function HomeScreen() {
-  const [projectModalOpen, setProjectModalOpen] = useAppStore((state) => [
-    state.projectModalOpen,
-    state.setProjectModalOpen,
-  ]);
+  const projectModalOpen = useAppStore((state) => state.projectModalOpen);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState(undefined);
   const [status, setStatus] = useState(undefined);
-  const [allInvoices, setAllInvoices] = useAppStore((state) => [
-    state.allInvoices,
-    state.setAllInvoices,
-  ]);
+
   const [rerender, setRerender] = useState(0);
-  const [activeProjects, setActiveProjects] = useState(undefined);
-  const [activeSum, setActiveSum] = useState(undefined);
-  const [futureProjects, setFutureProjects] = useState(undefined);
-  const [futureSum, setFutureSum] = useState(undefined);
 
   const rerenderfunc = () => {
     setRerender((inital) => inital + 1);
@@ -62,82 +52,30 @@ function HomeScreen() {
   useEffect(() => {
     if (data && status) {
       setIsLoading(false);
-      calcDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, status]);
 
-  const calcDetails = () => {
-    const active_projects = data.filter(
-      (item) => item.status.order != 1 && item.status.order != 5
-    );
 
-    setActiveProjects(active_projects.length);
-    setActiveSum(_.sum(active_projects.map((item) => item.honorar)));
-
-    const future_projects = data.filter((item) => item.status.order == 1);
-
-    setFutureProjects(future_projects.length);
-    setFutureSum(_.sum(future_projects.map((item) => item.honorar)));
-  };
 
   useEffect(() => {
     createProjectData();
     getStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectModalOpen, rerender]);
 
-  const SegmentStyle = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  };
 
   return (
     <>
       <Grid stackable columns={3}>
         <Grid.Row stretched>
-          <Grid.Column width={12}>
+          <Grid.Column width={16}>
             <Table
               data={data}
               isLoading={isLoading}
               status={status}
               rerenderfunc={rerenderfunc}
             />
-          </Grid.Column>
-          <Grid.Column width={4}>
-            <Segment loading={activeProjects == undefined} style={SegmentStyle}>
-
-
-              <Statistic size="small">
-                <Statistic.Value>{activeProjects}</Statistic.Value>
-                <Statistic.Label>Aktive Projekte</Statistic.Label>
-              </Statistic>
-
-            </Segment>
-            <Segment loading={activeSum == undefined} style={SegmentStyle}>
-
-              <Statistic size="small">
-                <Statistic.Value>
-                  {activeSum && activeSum.toLocaleString("de") + " €"}
-                </Statistic.Value>
-                <Statistic.Label>Auftragssumme</Statistic.Label>
-              </Statistic>
-
-
-            </Segment>
-            <Segment loading={futureProjects == undefined} style={SegmentStyle}>
-              <Statistic size="small">
-                <Statistic.Value>{futureProjects}</Statistic.Value>
-                <Statistic.Label>Projekte in Aussicht</Statistic.Label>
-              </Statistic>
-            </Segment>
-            <Segment loading={futureSum == undefined} style={SegmentStyle}>
-              <Statistic size="small">
-                <Statistic.Value>
-                  {futureSum && futureSum.toLocaleString("de") + " €"}
-                </Statistic.Value>
-                <Statistic.Label>Honorar in Aussicht</Statistic.Label>
-              </Statistic>
-            </Segment>
           </Grid.Column>
         </Grid.Row>
       </Grid>

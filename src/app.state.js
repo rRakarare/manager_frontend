@@ -36,8 +36,11 @@ export const useAppStore = create(
     projectsteps: [],
     setProjectsteps: (projectsteps) => set((state) => ({ projectsteps })),
 
+    projectHonorar: [],
+    setProjectHonorar: (projectHonorar) => set((state) => ({ projectHonorar })),
+
     projectdata: {},
-    setProjectdata: (projectdata) => set((state) => ({ projectdata })),
+    setProjectdata: (projectdata) => set((state) => ({projectdata})),
 
     editClientData: {},
     setEditClientData: (editClientData) => set((state) => ({ editClientData })),

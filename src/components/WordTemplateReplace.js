@@ -4,7 +4,7 @@ var _ = require("lodash");
 
 const WordTemplateReplace = ({ filepath, filename, data, render }) => {
 
-
+  
 
   const loadFile = async (url) => {
     const response = await fetch(url);
@@ -77,6 +77,8 @@ const WordTemplateReplace = ({ filepath, filename, data, render }) => {
     const template = await loadFile(filepath);
 
     const data = await datanew();
+
+    console.log(data)
 
     const doc = await handler.process(template, data);
     saveFile(filename, doc);

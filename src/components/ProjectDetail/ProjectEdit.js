@@ -7,10 +7,7 @@ import { useHistory } from "react-router-dom";
 function ProjectEdit() {
   const history = useHistory();
   const projectdata = useAppStore((state) => state.projectdata);
-  const [editModalOpen, setEditModalOpen] = useAppStore((state) => [
-    state.editModalOpen,
-    state.setEditModalOpen,
-  ]);
+  const setEditModalOpen = useAppStore((state) => state.setEditModalOpen);
 
   const [editData, setEditData] = useState({
     title: projectdata.title,
@@ -19,19 +16,22 @@ function ProjectEdit() {
     plz: projectdata.plz,
     part: projectdata.part,
     contact: projectdata.contact && projectdata.contact.substring(5),
-    client: projectdata.client.id,
+    client: projectdata.client && projectdata.client.id,
   });
-
 
   const salutoptions = [
     { value: 1, text: "Herr" },
     { value: 2, text: "Frau" },
-  ]
+  ];
 
-  const [salut, setSalut] = useState(projectdata.contact && projectdata.contact.substring(0,4) === "Herr" ? salutoptions[0] : salutoptions[1]);
+  const [salut, setSalut] = useState(
+    projectdata.contact && projectdata.contact.substring(0, 4) === "Herr"
+      ? salutoptions[0]
+      : salutoptions[1]
+  );
 
   const [clients, setClients] = useState([]);
-  const [error, setError] = useState("");
+  const [error] = useState("");
 
   const queryClients = async () => {
     try {
@@ -53,7 +53,7 @@ function ProjectEdit() {
 
   const updateProject = async () => {
     try {
-      const res = await axiosInstance.put(`/projectupdate/${projectdata.id}/`, {
+      await axiosInstance.put(`/projectupdate/${projectdata.id}/`, {
         ...editData,
         title: editData.title,
         client: editData.client,
@@ -140,7 +140,9 @@ function ProjectEdit() {
                 error.client && { content: error.client, pointing: "below" }
               }
               onChange={(e, result) => {
-                setSalut(result.value === 1 ? salutoptions[0] : salutoptions[1]);
+                setSalut(
+                  result.value === 1 ? salutoptions[0] : salutoptions[1]
+                );
               }}
               options={[
                 { value: 1, text: "Herr" },

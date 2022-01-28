@@ -11,11 +11,18 @@ import { useHistory } from "react-router-dom";
 import { useAppStore } from '../app.state'
 
 function LoginForm() {
+
+  useEffect(() => {
+    console.log(process.env.REACT_APP_API_URL)
+    console.log(process.env.REACT_APP_TEST)
+    console.log(process.env.NODE_ENV)
+  }, [])
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const [auth,setAuth] = useAppStore(state=>[state.auth,state.setAuth])
+  const setAuth = useAppStore(state=>state.setAuth)
 
   const history = useHistory();
 

@@ -7,43 +7,62 @@ import NumberFormat from "react-number-format";
 function EditInvoice({ invoiceID }) {
   const invoices = useAppStore((state) => state.invoices);
   const invoice = invoices.find((item) => item.id === invoiceID);
-  
+  const [invoiceNumber, setInvoiceNumber] = useState({});
   const [newdata, setNewdata] = useState({ ...invoice });
-  const [error, setError] = useState({});
-  const [invoiceEditModel, setInvoiceEditModel] = useAppStore((state) => [
-    state.invoiceEditModel,
-    state.setInvoiceEditModel,
-  ]);
+  const [error] = useState({});
+  const setInvoiceEditModel = useAppStore((state) => state.setInvoiceEditModel);
 
-  const [invoiceStati, setInvoiceStati] = useAppStore((state) => [
-    state.invoiceStati,
-    state.setInvoiceStati,
-  ]);
+  const invoiceStati = useAppStore((state) => state.invoiceStati);
 
   const putInvoice = async () => {
     try {
-      const res = await axiosInstance.put(`invoices/${invoice.id}`, {...newdata})
-      console.log(res.data)
-    } catch(err) {
-      console.log(err.response)
+      if (newdata.status === 2 && invoice.invoice_number === null) {
+        const number =
+          invoiceNumber.number.toString().length < 4
+            ? "0" + invoiceNumber.number
+            : `${invoiceNumber.number}`;
+        const uniqnumber = `${invoiceNumber.short}-${invoiceNumber.year}-${number}`;
+
+        await axiosInstance.put(`invoices/${invoice.id}`, {
+          ...newdata,
+          invoice_number: uniqnumber,
+        });
+        await axiosInstance.put(`invoice-number/${invoiceNumber.id}/`, {
+          ...invoiceNumber,
+          number: invoiceNumber.number + 1,
+        });
+      } else {
+        await axiosInstance.put(`invoices/${invoice.id}`, {
+          ...newdata,
+          invoice_number: invoice.invoice_number,
+        });
+      }
+    } catch (err) {
+      console.log(err.response);
     }
-    setInvoiceEditModel(false)
-  }
-  
+    setInvoiceEditModel(false);
+  };
+
+  const getInvoiceNumber = async () => {
+    try {
+      const res = await axiosInstance.get("/invoice-number/");
+      const data = res.data[0];
+      setInvoiceNumber(data);
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
 
   useEffect(() => {
-    console.log(newdata);
-  }, [newdata]);
+    getInvoiceNumber();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
-  useEffect(() => {
-    console.log(invoiceStati);
-    console.log(invoice);
-  }, [invoiceStati]);
 
   return (
     <>
-      <Modal.Header>Neue Rechnung</Modal.Header>
+      <Modal.Header>Rechnung Bearbeiten</Modal.Header>
       <Modal.Content>
         <Form>
           <Form.Field
@@ -63,8 +82,8 @@ function EditInvoice({ invoiceID }) {
               placeholder="Betrag in € (netto)"
               value={newdata.amount}
               onValueChange={(values) => {
-                console.log(values)
-                const { formattedValue, value } = values;
+                console.log(values);
+                const { value } = values;
                 setNewdata((state) => ({ ...state, amount: value }));
               }}
               isNumericString={true}
@@ -75,8 +94,6 @@ function EditInvoice({ invoiceID }) {
               customInput={Input}
             />
           </Form.Field>
-
-
 
           <Form.Field
             selection
@@ -100,7 +117,7 @@ function EditInvoice({ invoiceID }) {
           <Form.Field
             label="Rechnungsstellung"
             control={Input}
-            disabled={newdata.status == 1 ? true : false}
+            disabled={newdata.status === 1 ? true : false}
             value={newdata.date_of_invoicing}
             error={error.name && { content: error.name, pointing: "below" }}
             onChange={(e) =>
@@ -112,7 +129,6 @@ function EditInvoice({ invoiceID }) {
             placeholder="Title"
             type="date"
           />
-
 
           <Form.Field
             label="Vorraussichtlicher Zahlungseingang"
@@ -131,8 +147,12 @@ function EditInvoice({ invoiceID }) {
         </Form>
       </Modal.Content>
       <Modal.Actions>
-        <Button negative onClick={()=>setInvoiceEditModel(false)}>Disagree</Button>
-        <Button positive onClick={()=>putInvoice()}>Agree</Button>
+        <Button negative onClick={() => setInvoiceEditModel(false)}>
+          Disagree
+        </Button>
+        <Button positive onClick={() => putInvoice()}>
+          Agree
+        </Button>
       </Modal.Actions>
     </>
   );

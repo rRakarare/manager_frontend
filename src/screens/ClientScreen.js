@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Portal, Button, Segment, Header } from "semantic-ui-react";
 
-import axios from "axios";
 import axiosInstance from "../axios/axios";
 import { useAppStore } from "../app.state";
 import CreateClient from "../components/Clients/CreateClient";
@@ -10,11 +9,15 @@ import EditClient from "../components/Clients/EditClient";
 
 function ClientScreen() {
   const [data, setData] = useState([]);
-  const clientImage = useAppStore((state) => state.cropImage);
   const [openClient, setOpenClient] = useAppStore((state) => [
     state.openClient,
     state.setOpenClient,
   ]);
+  const [update, setUpdate] = useState(0)
+
+  const updateSite = () => {
+    setUpdate(state => state+1)
+  }
 
   const [openEdit, setOpenEdit] = useState(false);
 
@@ -33,11 +36,11 @@ function ClientScreen() {
 
   useEffect(() => {
     getClients();
-  }, [openClient, openEdit]);
+  }, [openClient, openEdit, update]);
 
   return (
     <div>
-      <ClientTable data={data} editPortal={editPortal} />
+      <ClientTable updateSite={updateSite} data={data} editPortal={editPortal} />
       <Portal open={openClient}>
         <Segment
           style={{

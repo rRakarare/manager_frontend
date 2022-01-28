@@ -6,7 +6,6 @@ import {
   Popup,
   Modal,
   Button,
-  Container,
 } from "semantic-ui-react";
 import MaterialTable from "material-table";
 import axiosInstance from "../../axios/axios";
@@ -118,6 +117,7 @@ function ProjectInvoices({ projectID }) {
   useEffect(() => {
     getInvoiceStati();
     getArtikels();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -184,7 +184,7 @@ function ProjectInvoices({ projectID }) {
                 return (
                   <span
                     style={{
-                      color: rowData.status === 3 ? "#016936" : "#FFD700",
+                      color: rowData.status === 3 ? "#016936" : "#CFCCD6",
                     }}
                   >
                     {date}
@@ -324,9 +324,9 @@ function ProjectInvoices({ projectID }) {
             sorting: true,
             showTitle: true,
             toolbar: true,
-            pageSize: 4,
+            pageSize: 7,
             search: false,
-            pageSizeOptions: [],
+            padding: 'dense'
           }}
         />
       )}

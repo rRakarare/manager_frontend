@@ -8,26 +8,28 @@ function CreateInvoice() {
   const [newdata, setNewdata] = useState({});
   const [error, setError] = useState({});
 
-  const [invoiceCreateModel, setInvoiceCreateModel] = useAppStore((state) => [
-    state.invoiceCreateModel,
-    state.setInvoiceCreateModel,
-  ]);
+  const setInvoiceCreateModel = useAppStore(
+    (state) => state.setInvoiceCreateModel
+  );
 
-  const projectdata = useAppStore(state => state.projectdata)
+  const projectdata = useAppStore((state) => state.projectdata);
 
   const postInvoice = async () => {
-      try{
-          const res = await axiosInstance.post('/invoices/', {...newdata, project:projectdata.id, status:1, invoice_number:"RN"})
-          console.log(res.data)
-      } catch(err) {
-          console.log(err.response)
-      }
-      setInvoiceCreateModel(false)
-  }
+    try {
+      const res = await axiosInstance.post("/invoices/", {
+        ...newdata,
+        project: projectdata.id,
+        status: 1,
+      });
+      console.log(res.data);
+      setInvoiceCreateModel(false);
+    } catch (err) {
+      console.log(err.response);
+      setError(err.response.data);
+    }
+  };
 
-  useEffect(() => {
-    console.log(newdata);
-  }, [newdata]);
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -37,20 +39,22 @@ function CreateInvoice() {
           <Form.Field
             label="Rechnungsname"
             control={Input}
-            error={error.name && { content: error.name, pointing: "below" }}
+            error={error.title && { content: error.title, pointing: "below" }}
             onChange={(e) =>
               setNewdata((state) => ({ ...state, title: e.target.value }))
             }
             placeholder="Title"
           />
 
-          <Form.Field>
+          <Form.Field
+            error={error.amount && { content: error.amount, pointing: "below" }}
+          >
             <label>Rechnungsbetrag</label>
             <NumberFormat
               placeholder="Betrag in € (netto)"
               value={newdata.amount}
               onValueChange={(values) => {
-                const { formattedValue, value } = values;
+                const { value } = values;
                 setNewdata((state) => ({ ...state, amount: value }));
               }}
               isNumericString={true}
@@ -65,9 +69,17 @@ function CreateInvoice() {
           <Form.Field
             label="Vorraussichtliche Rechnungsstellung"
             control={Input}
-            error={error.name && { content: error.name, pointing: "below" }}
+            error={
+              error.date_of_payment && {
+                content: error.date_of_payment,
+                pointing: "below",
+              }
+            }
             onChange={(e) =>
-              setNewdata((state) => ({ ...state, date_of_payment: e.target.value }))
+              setNewdata((state) => ({
+                ...state,
+                date_of_payment: e.target.value,
+              }))
             }
             placeholder="Title"
             type="date"
@@ -78,7 +90,9 @@ function CreateInvoice() {
         <Button negative onClick={() => setInvoiceCreateModel(false)}>
           Disagree
         </Button>
-        <Button positive onClick={()=>postInvoice()}>Agree</Button>
+        <Button positive onClick={() => postInvoice()}>
+          Agree
+        </Button>
       </Modal.Actions>
     </>
   );

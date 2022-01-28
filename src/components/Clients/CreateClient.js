@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Input, Image, Form, Dropdown } from "semantic-ui-react";
-import axios from "axios";
 import convert from "image-file-resize";
 import axiosInstance from "../../axios/axios";
 import { useAppStore } from "../../app.state";
+import sample from '../../images/sample.svg'
 
 import CreateCrop from "./CreateCrop";
 
@@ -40,18 +40,19 @@ function CreateClient() {
           .then((r) => r.blob())
           .then(
             (blobFile) =>
-              new File([blobFile], `${clientName}.png`, { type: "image/png" })
+              new File([blobFile], `${clientName.replace('.','-').replace(' ', '-')}.jpeg`, { type: "image/jpeg" })
           );
 
         const resizedImage = await convert({
           file: image,
           width: 300,
           height: 300,
-          type: "png",
+          type: "jpeg",
         });
         formData.append("image", resizedImage);
       }
       formData.append("name", clientName);
+      formData.append("short", clientShort);
       formData.append("artikel", clientArtikel);
       await axiosInstance.post("/kunden/", formData);
 
@@ -74,7 +75,7 @@ function CreateClient() {
           src={
             cropImage
               ? cropImage
-              : "/sample.svg"
+              : sample
           }
           onClick={() => setCropModalOpen(true)}
           style={{ cursor: "pointer", padding: "1rem" }}
@@ -88,14 +89,21 @@ function CreateClient() {
             placeholder="Name"
           />
           <Form.Field
+            onChange={(e) => setClientShort(e.target.value)}
+            value={clientShort}
+            control={Input}
+            error={error.short && { content: error.short, pointing: "below" }}
+            placeholder="Kürzel (max. 5 Characters)"
+          />
+          <Form.Field
             selection
             control={Dropdown}
-            // error={
-            //   error.project_type && {
-            //     content: error.project_type,
-            //     pointing: "below",
-            //   }
-            // }
+            error={
+              error.artikel && {
+                content: 'Artikel wählen',
+                pointing: "below",
+              }
+            }
             onChange={(e, result) =>
               setClientArtikel(result.value)
             }

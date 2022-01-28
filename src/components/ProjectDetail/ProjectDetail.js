@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Dimmer,
   Loader,
-  Item,
   Button,
   Image,
   Modal,
@@ -11,31 +10,21 @@ import {
 } from "semantic-ui-react";
 import axiosInstance from "../../axios/axios";
 import { useAppStore } from "../../app.state";
-import WordTemplateReplace from "../WordTemplateReplace";
 import ProjectEdit from "./ProjectEdit";
 import CreateOffer from "./CreateOffer";
 
 var _ = require("lodash/core");
 
 function ProjectDetail({ projectID }) {
-  const dataold = {
-    loop: [
-      {
-        name: "rene",
-        image: { isImage: true, url: "/smile.png", width: 200, height: 200 },
-      },
-      {
-        name: "couti",
-        image: { isImage: true, url: "/logo512.png", width: 200, height: 200 },
-      },
-    ],
-    asdqwe: { isImage: true, url: "/logo512.png", width: 200, height: 200 },
-    qwe2: "Hello World",
-  };
+
 
   const [projectdata, setProjectdata] = useAppStore((state) => [
     state.projectdata,
     state.setProjectdata,
+  ]);
+  const [projectHonorar, setProjectHonorar] = useAppStore((state) => [
+    state.projectHonorar,
+    state.setProjectHonorar,
   ]);
 
   const [editModalOpen, setEditModalOpen] = useAppStore((state) => [
@@ -50,9 +39,21 @@ function ProjectDetail({ projectID }) {
 
   const invoices = useAppStore((state) => state.invoices);
 
-  let honorar = 0;
 
-  invoices.forEach((item) => (honorar += parseFloat(item.amount)));
+  useEffect(() => {
+    if (invoices) {
+      let betrag = 0;
+      invoices.forEach((item) => (betrag += parseFloat(item.amount)));
+      setProjectHonorar(betrag)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invoices])
+
+
+
+
+
+  
 
   const getProjectData = async () => {
     try {
@@ -94,10 +95,10 @@ function ProjectDetail({ projectID }) {
           <Image
             rounded
             style={{ width: "23.625px", marginRight: "6px" }}
-            src={projectdata.client.image}
+            src={projectdata.client && projectdata.client.image}
           />
           <List.Content>
-            <List.Header as="h3">{projectdata.client.name}</List.Header>
+            <List.Header as="h3">{projectdata.client ? projectdata.client.name : 'NO CLIENT'}</List.Header>
           </List.Content>
         </List.Item>
         <List.Item>
@@ -108,7 +109,8 @@ function ProjectDetail({ projectID }) {
             </List.Header>
             <List.Description style={{ marginLeft: "11px" }}>
               <strong style={{ color: "green" }}>
-                {honorar.toLocaleString("de") + " €"}
+                {projectHonorar &&
+                  projectHonorar.toLocaleString("de") + " €"}
               </strong>
             </List.Description>
           </List.Content>
@@ -153,6 +155,7 @@ function ProjectDetail({ projectID }) {
               onClick={() => setEditModalOpen(true)}
             />
             <Button
+              disabled={projectdata.client === null ? true : false}
               icon="file word"
               content="create"
               onClick={() => setCreateOfferModel(true)}

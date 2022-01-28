@@ -1,11 +1,9 @@
-import React, { useState, useCallback, useRef } from "react";
-import axios from "axios";
+import React, { useState, useCallback } from "react";
 import { Gluejar } from "@charliewilco/gluejar";
 import { Slider } from "react-semantic-ui-range";
 import { Segment, Button } from "semantic-ui-react";
 import getCroppedImg from "../cropimage";
 import { useAppStore } from "../../app.state";
-import axiosInstance from "../../axios/axios";
 import Cropper from "react-easy-crop";
 
 function CreateCrop() {
@@ -13,10 +11,7 @@ function CreateCrop() {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
-  const [cropImage, setCropImage] = useAppStore((state) => [
-    state.cropImage,
-    state.setCropImage,
-  ]);
+  const setCropImage = useAppStore((state) => state.setCropImage);
 
   const setCropModalOpen = useAppStore((state) => state.setCropModalOpen);
 

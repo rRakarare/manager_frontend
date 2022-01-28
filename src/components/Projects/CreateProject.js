@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Dropdown, Input } from "semantic-ui-react";
+import { Modal, Button, Form, Dropdown, Input, Portal, Segment, Header } from "semantic-ui-react";
 import axiosInstance from "../../axios/axios";
 import { useAppStore } from "../../app.state";
-import axios from "axios";
+import CreateClient from '../Clients/CreateClient'
 
 function CreateProject() {
-  const [newdata, setNewdata] = useState({});
+  
   const [clients, setClients] = useState([]);
+  const [newdata, setNewdata] = useState({});
+  const [openClient, setOpenClient] = useAppStore((state) => [
+    state.openClient,
+    state.setOpenClient,
+  ]);
   const [types, setTypes] = useState([]);
   const [error, setError] = useState({});
   const setProjectModalOpen = useAppStore((state) => state.setProjectModalOpen);
 
   const AddProject = async () => {
     try {
-      const res = await axiosInstance.post("/addProject/", {
+      await axiosInstance.post("/addProject/", {
         ...newdata,
         status: 1,
       });
@@ -37,6 +42,7 @@ function CreateProject() {
           };
         })
       );
+      setNewdata(state=>({...state, client: Math.max(...res.data.map(item=>item.id))}))
     } catch (err) {
       console.log(err.response);
     }
@@ -63,17 +69,43 @@ function CreateProject() {
   useEffect(() => {
     queryClients();
     queryTypes();
-  }, []);
+  }, [openClient]);
+
 
   return (
     <>
+    <Portal open={openClient}>
+        <Segment
+          style={{
+            left: 0,
+            right: 0,
+            marginLeft: "auto",
+            marginRight: "auto",
+            position: "fixed",
+            width: "280px",
+            top: "20%",
+            zIndex: 1000,
+          }}
+        >
+          <Header>Neuen Kunden anlegen</Header>
+          <CreateClient/>
+
+          <Button
+            style={{ marginTop: ".5rem" }}
+            fluid
+            content="Abbrechen"
+            negative
+            onClick={() => setOpenClient(false)}
+          />
+        </Segment>
+      </Portal>
       <Modal.Header>Neues Projekt</Modal.Header>
       <Modal.Content>
         <Form>
           <Form.Field
             label="Title"
             control={Input}
-            error={error.name && { content: error.name, pointing: "below" }}
+            error={error.title && { content: error.title, pointing: "below" }}
             onChange={(e) =>
               setNewdata((state) => ({ ...state, title: e.target.value }))
             }
@@ -103,14 +135,18 @@ function CreateProject() {
             selection
             control={Dropdown}
             label="Kunde"
+            value={newdata.client}
             error={error.client && { content: error.client, pointing: "below" }}
-            onChange={(e, result) =>
+            onChange={(e, result) =>{
               setNewdata((state) => ({ ...state, client: result.value }))
-            }
+            }}
             fluid
             placeholder="Kunde auswählen"
             options={clients}
           />
+          <Button onClick={()=>{
+            setOpenClient(true)
+          }} icon="add" label="Neuer Kunde"/>
         </Form>
       </Modal.Content>
       <Modal.Actions>

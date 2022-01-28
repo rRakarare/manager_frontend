@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Input, Image, Form, Dropdown } from "semantic-ui-react";
-import axios from "axios";
 import convert from "image-file-resize";
 import axiosInstance from "../../axios/axios";
 import { useAppStore } from "../../app.state";
@@ -13,14 +12,11 @@ function EditClient({ editPortal }) {
     state.setCropModalOpen,
   ]);
 
-  const [editClientData, setEditClientData] = useAppStore((state) => [
-    state.editClientData,
-    state.setEditClientData,
-  ]);
+  const editClientData = useAppStore((state) => state.editClientData);
   const [clientName, setClientName] = useState(editClientData.name);
+  const [clientShort, setClientShort] = useState(editClientData.short);
   const [error, setError] = useState({});
   const cropImage = useAppStore((state) => state.cropImage);
-  const setOpenClient = useAppStore((state) => state.setOpenClient);
   const [artikels, setArtikels] = useState([]);
   const [clientArtikel, setClientArtikel] = useState(editClientData.artikel);
 
@@ -43,18 +39,23 @@ function EditClient({ editPortal }) {
           .then((r) => r.blob())
           .then(
             (blobFile) =>
-              new File([blobFile], `${clientName}.png`, { type: "image/png" })
+              new File(
+                [blobFile],
+                `${clientName.replace(".", "-").replace(" ", "-")}.jpeg`,
+                { type: "image/jpeg" }
+              )
           );
 
         const resizedImage = await convert({
           file: image,
           width: 300,
           height: 300,
-          type: "png",
+          type: "jpeg",
         });
         formData.append("image", resizedImage);
       }
       formData.append("name", clientName);
+      formData.append("short", clientShort);
       formData.append("artikel", clientArtikel);
       await axiosInstance.put(`/clients/${editClientData.id}/`, formData);
 
@@ -87,6 +88,13 @@ function EditClient({ editPortal }) {
             placeholder="Name"
           />
           <Form.Field
+            onChange={(e) => setClientShort(e.target.value)}
+            value={clientShort}
+            control={Input}
+            error={error.short && { content: error.short, pointing: "below" }}
+            placeholder="Name"
+          />
+          <Form.Field
             selection
             control={Dropdown}
             value={clientArtikel}
@@ -102,7 +110,7 @@ function EditClient({ editPortal }) {
         <Button
           onClick={() => postClient()}
           style={{ display: "block", width: "100%", marginTop: ".5rem" }}
-          content="Erstellen"
+          content="Aktualisieren"
         />
       </div>
       <Modal

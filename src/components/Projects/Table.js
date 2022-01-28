@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MaterialTable from "material-table";
 import { useHistory } from "react-router-dom";
 import axiosInstance from "../../axios/axios";
 import { useAppStore } from "../../app.state";
-import { Modal, Button, Form, Dropdown } from "semantic-ui-react";
+import { Modal, Button, Popup } from "semantic-ui-react";
 
 function Table({ data, status, isLoading, rerenderfunc }) {
   const [open, setOpen] = useState(false);
   const [delproject, setDelproject] = useState({});
-  const [allInvoices, setAllInvoices] = useAppStore((state) => [
-    state.allInvoices,
-    state.setAllInvoices,
-  ]);
   const history = useHistory();
   const setProjectModalOpen = useAppStore((state) => state.setProjectModalOpen);
 
@@ -59,8 +55,23 @@ function Table({ data, status, isLoading, rerenderfunc }) {
         isLoading={isLoading}
         title="Projektliste"
         columns={[
+          { title: "Ident", field: "id" },
           { title: "Nr.", field: "project_number" },
-          { title: "Titel", field: "title" },
+          { title: "Titel", field: "title", render: (rowData) => {
+
+            return (
+              <>
+                {rowData.title.length > 17 ? (
+                  <Popup
+                    content={rowData.title}
+                    trigger={<p>{rowData.title.slice(0, 17) + "..."}</p>}
+                  />
+                ) : (
+                  <p>{rowData.title}</p>
+                )}
+              </>
+            );
+          }, },
           { title: "Kunde", field: "client" },
           { title: "Erstellt", field: "created_at", type: "datetime" },
           { title: "Status", field: "status", lookup: lookupstatus },
@@ -77,6 +88,9 @@ function Table({ data, status, isLoading, rerenderfunc }) {
           sorting: true,
           filtering: true,
           exportButton: true,
+          pageSize: 10,
+          padding: 'dense',
+          pageSizeOptions: [10, 20, 50, { value: tableData.length, label: 'All' }]
         }}
         actions={[
           {

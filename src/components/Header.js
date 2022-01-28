@@ -1,6 +1,7 @@
 import React from "react";
 import { Menu, Sidebar, Dropdown, Icon } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
 import { useAppStore } from "../app.state";
 import ubcsvg from "../images/ubc.svg";
 
@@ -11,6 +12,8 @@ function Nav({ children }) {
 
   const history = useHistory();
   const username = localStorage.getItem("profile_name");
+
+  const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
 
   const logout = () => {
     setAuth(false);
@@ -75,6 +78,11 @@ function Nav({ children }) {
             <Icon name="eur" />
             Rechungen
           </Menu.Item>
+
+          <Menu.Item as={Link} to="/forecast">
+            <Icon name="chart line" />
+            Forecast
+          </Menu.Item>
         </Sidebar>
 
         <Sidebar.Pusher
@@ -83,7 +91,7 @@ function Nav({ children }) {
             height: "100vh",
             paddingTop: 53.63,
             transition: "400ms",
-            paddingRight: visible ? 148 : 0,
+            paddingRight: visible && !isTabletOrMobile ? 148 : 0,
           }}
         >
           {children}
