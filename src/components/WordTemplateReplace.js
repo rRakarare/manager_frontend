@@ -13,7 +13,9 @@ const WordTemplateReplace = ({ filepath, filename, data, render }) => {
   };
 
   const getImage = async (url, width, height) => {
+
     const response = await fetch(url);
+
     const blob = await response.blob();
     return {
       _type: "image",

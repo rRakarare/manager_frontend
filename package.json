@@ -41,7 +41,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "relocate": "react-scripts build && rm -rf ../app/build && mv -f build ../app"
+    "relocate": "react-scripts build && rm -rf ../manager_backend/build && mv -f build ../manager_backend"
   },
   "eslintConfig": {
     "extends": [
